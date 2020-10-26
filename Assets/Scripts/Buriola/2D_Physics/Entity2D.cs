@@ -10,6 +10,8 @@ namespace Buriola._2D_Physics
         
         private BoxCollider2D _collider;
         private RaycastOrigins2D _raycastOrigins;
+        
+        public CollisionInfo2D CollisionInfo { get; private set; }
 
         [SerializeField] private LayerMask _collisionMask = default;
         [SerializeField, Range(2, 10)] private int _horizontalRayCount = 4;
@@ -21,6 +23,7 @@ namespace Buriola._2D_Physics
         private void Start()
         {
             _collider = GetComponent<BoxCollider2D>();
+            CollisionInfo = new CollisionInfo2D();
             CalculateRaySpacing();
         }
 
@@ -39,6 +42,10 @@ namespace Buriola._2D_Physics
                 {
                     moveAmount.y = (hit.distance - SKIN_WIDTH) * directionY;
                     rayLength = hit.distance;
+
+                    bool below = directionY == -1;
+                    bool above = directionY == 1;
+                    CollisionInfo.SetVerticalCollisions(above, below);
                 }
             }
 
@@ -59,6 +66,10 @@ namespace Buriola._2D_Physics
                 {
                     moveAmount.x = (hit.distance - SKIN_WIDTH) * directionX;
                     rayLength = hit.distance;
+
+                    bool left = directionX == -1;
+                    bool right = directionX == 1;
+                    CollisionInfo.SetHorizontalCollisions(left, right);
                 }
             }
         }
@@ -86,6 +97,7 @@ namespace Buriola._2D_Physics
         public void Move(Vector2 moveAmount)
         {
             UpdateRaycastOrigins();
+            CollisionInfo.Reset();
 
             if (moveAmount.x != 0)
             {

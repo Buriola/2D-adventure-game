@@ -1,9 +1,43 @@
-﻿using UnityEngine;
-
-namespace Buriola._2D_Physics
+﻿namespace Buriola._2D_Physics
 {
-    public struct CollisionInfo2D
+    public sealed class CollisionInfo2D
     {
+        private bool _above;
+        private bool _below;
+        private bool _left;
+        private bool _right;
         
+        public void Reset()
+        {
+            _above = _below = false;
+            _left = _right = false;
+        }
+        
+        public void SetVerticalCollisions(bool above, bool below)
+        {
+            _above = above;
+            _below = below;
+        }
+
+        public void SetHorizontalCollisions(bool left, bool right)
+        {
+            _left = left;
+            _right = right;
+        }
+        
+        public bool HasVerticalCollision()
+        {
+            return _above || _below;
+        }
+
+        public bool HasHorizontalCollision()
+        {
+            return _left || _right;
+        }
+
+        public bool IsGrounded()
+        {
+            return _below;
+        }
     }
 }
