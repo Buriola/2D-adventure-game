@@ -3,7 +3,7 @@ using Buriola._2D_Physics;
 using Buriola.InputSystem;
 using CallbackContext = UnityEngine.InputSystem.InputAction.CallbackContext;
 
-namespace Buriola.Player
+namespace Buriola.Gameplay.Player
 {
     [RequireComponent(typeof(Entity2D))]
     [DisallowMultipleComponent]
@@ -19,8 +19,7 @@ namespace Buriola.Player
         
         private float _gravity;
         private float _jumpVelocity;
-        private float _delta;
-        
+
         private Vector2 _velocity;
         private float _velocityXSmoothing;
 
@@ -63,14 +62,12 @@ namespace Buriola.Player
 
         private void FixedUpdate()
         {
-            _delta = Time.fixedDeltaTime;
-
-            _velocity.y += _gravity * _delta;
+            _velocity.y += _gravity * _entity2D.FixedDeltaTime;
             
             float targetVelocityX = _xAxis * _moveSpeed;
             _velocity.x = Mathf.SmoothDamp(_velocity.x, targetVelocityX, ref _velocityXSmoothing, _entity2D.CollisionInfo.IsGrounded ? _accelerationTimeGrounded : _accelerationTimeAirborne);
             
-            _entity2D.Move(_velocity * _delta);
+            _entity2D.Move(_velocity * _entity2D.FixedDeltaTime);
         }
 
         private void OnMovementStart(CallbackContext obj)

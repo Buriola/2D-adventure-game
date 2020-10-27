@@ -1,34 +1,17 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Buriola._2D_Physics
 {
-    [RequireComponent(typeof(BoxCollider2D))]
     [DisallowMultipleComponent]
-    public class Entity2D : MonoBehaviour
+    public sealed class Entity2D : BaseEntity2D
     {
-        private const float SKIN_WIDTH = .015f;
-        
-        private BoxCollider2D _collider;
-        private RaycastOrigins2D _raycastOrigins;
-        
-        public CollisionInfo2D CollisionInfo { get; private set; }
-
-        [SerializeField] private LayerMask _collisionMask = default;
-        [SerializeField, Range(2, 10)] private int _horizontalRayCount = 4;
-        [SerializeField, Range(2, 10)] private int _verticalRayCount = 4;
-
         private float _maxClimbAngle = 80f;
         private float _maxDescendAngle = 75f;
         
-        private float _horizontalRaySpacing;
-        private float _verticalRaySpacing;
-
-        private void Start()
+        protected override void Start()
         {
-            _collider = GetComponent<BoxCollider2D>();
+            base.Start();
             CollisionInfo = new CollisionInfo2D();
-            CalculateRaySpacing();
         }
 
         private void VerticalCollisions(ref Vector2 moveAmount)
@@ -183,26 +166,6 @@ namespace Buriola._2D_Physics
                     }
                 }
             }
-        }
-        
-        private void UpdateRaycastOrigins()
-        {
-            Bounds bounds = _collider.bounds;
-            bounds.Expand(SKIN_WIDTH * -2);
-            
-            _raycastOrigins.BottomLeft    = new Vector2(bounds.min.x, bounds.min.y);
-            _raycastOrigins.BottomRight   = new Vector2(bounds.max.x, bounds.min.y);
-            _raycastOrigins.TopLeft       = new Vector2(bounds.min.x, bounds.max.y);
-            _raycastOrigins.TopRight      = new Vector2(bounds.max.x, bounds.max.y);
-        }
-
-        private void CalculateRaySpacing()
-        {
-            Bounds bounds = _collider.bounds;
-            bounds.Expand(SKIN_WIDTH * -2);
-
-            _horizontalRaySpacing = bounds.size.y / (_horizontalRayCount - 1);
-            _verticalRaySpacing = bounds.size.x / (_verticalRayCount - 1);
         }
 
         public void Move(Vector2 moveAmount)
