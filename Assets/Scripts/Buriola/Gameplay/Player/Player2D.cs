@@ -16,15 +16,22 @@ namespace Buriola.Gameplay.Player
         [SerializeField] private float _accelerationTimeGrounded = 0.1f;
         [SerializeField] private float _jumpHeight = 8f;
         [SerializeField] private float _timeToJumpApex = 0.4f;
-        
-        private float _gravity;
-        private float _jumpVelocity;
+        [SerializeField] private float _wallSlideMaxSpeed = 3f;
+        [SerializeField] private float _wallStickTime = 0.25f;
+        [SerializeField] private Vector2 _wallJumpClimb = Vector2.zero;
+        [SerializeField] private Vector2 _wallJumpOff = Vector2.zero;
+        [SerializeField] private Vector2 _wallJumpLeap = Vector2.zero;
 
         private Vector2 _velocity;
-        private float _velocityXSmoothing;
-
+        
         private float _xAxis;
-        private bool _isJumping;
+        private float _gravity;
+        private float _jumpVelocity;
+        private float _velocityXSmoothing;
+        private float _timeToWallUnstick;
+        
+        private bool _isWallSliding;
+        private int _wallDirectionX;
 
         private void OnEnable()
         {
@@ -48,6 +55,7 @@ namespace Buriola.Gameplay.Player
 
             _gravity = -(2 * _jumpHeight) / Mathf.Pow(_timeToJumpApex, 2);
             _jumpVelocity = Mathf.Abs(_gravity) * _timeToJumpApex;
+            _timeToWallUnstick = _wallStickTime;
         }
 
         private void Update()
@@ -62,11 +70,41 @@ namespace Buriola.Gameplay.Player
 
         private void FixedUpdate()
         {
-            _velocity.y += _gravity * _entity2D.FixedDeltaTime;
+            _wallDirectionX = _entity2D.CollisionInfo.Left ? -1 : 1;
             
             float targetVelocityX = _xAxis * _moveSpeed;
             _velocity.x = Mathf.SmoothDamp(_velocity.x, targetVelocityX, ref _velocityXSmoothing, _entity2D.CollisionInfo.IsGrounded ? _accelerationTimeGrounded : _accelerationTimeAirborne);
             
+            _isWallSliding = false;
+            if (_entity2D.CollisionInfo.HasHorizontalCollision() && !_entity2D.CollisionInfo.IsGrounded && _velocity.y < 0)
+            {
+                _isWallSliding = true;
+                if (_velocity.y < -_wallSlideMaxSpeed)
+                {
+                    _velocity.y = -_wallSlideMaxSpeed;
+                }
+
+                if (_timeToWallUnstick > 0)
+                {
+                    _velocity.x = 0f;
+                    _velocityXSmoothing = 0f;
+                    
+                    if (_xAxis != _wallDirectionX && _xAxis != 0f)
+                    {
+                        _timeToWallUnstick -= _entity2D.FixedDeltaTime;
+                    }
+                    else
+                    {
+                        _timeToWallUnstick = _wallStickTime;
+                    }
+                }
+                else
+                {
+                    _timeToWallUnstick = _wallStickTime;
+                }
+            }
+            
+            _velocity.y += _gravity * _entity2D.FixedDeltaTime;
             _entity2D.Move(_velocity * _entity2D.FixedDeltaTime);
         }
 
@@ -86,15 +124,34 @@ namespace Buriola.Gameplay.Player
 
         private void OnJumpPressed(CallbackContext obj)
         {
-            if (_isJumping || !_entity2D.CollisionInfo.IsGrounded) return;
+            if (_isWallSliding)
+            {
+                if (_wallDirectionX == _xAxis)
+                {
+                    _velocity.x = -_wallDirectionX * _wallJumpClimb.x;
+                    _velocity.y = _wallJumpClimb.y;
+                }
+                else if (_xAxis == 0f)
+                {
+                    _velocity.x = -_wallDirectionX * _wallJumpOff.x;
+                    _velocity.y = _wallJumpOff.y;
+                }
+                else
+                {
+                    _velocity.x = -_wallDirectionX * _wallJumpLeap.x;
+                    _velocity.y = _wallJumpLeap.y;
+                }
+            }
             
-            _isJumping = true;
-            _velocity.y = _jumpVelocity;
+            if (_entity2D.CollisionInfo.IsGrounded)
+            {
+                _velocity.y = _jumpVelocity;
+            }
         }
 
         private void OnJumpEnded(CallbackContext obj)
         {
-            _isJumping = false;
+            
         }
     }
 }

@@ -8,12 +8,14 @@ namespace Buriola._2D_Physics
         private bool _below;
         private bool _left;
         private bool _right;
+        public bool Left => _left;
         public bool IsClimbingSlope { get; set; }
         public bool IsDescendingSlope { get; set; }
         public bool IsGrounded => _below;
         public float CurrentSlopeAngle { get; set; }
         public float PreviousSlopeAngle { get; private set; }
         public Vector2 PreviousVelocity { get; set; }
+        public int FaceDirection { get; set; }
         
         public void Reset()
         {

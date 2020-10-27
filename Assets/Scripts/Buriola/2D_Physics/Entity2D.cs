@@ -12,6 +12,7 @@ namespace Buriola._2D_Physics
         {
             base.Start();
             CollisionInfo = new CollisionInfo2D();
+            CollisionInfo.FaceDirection = 1;
         }
 
         private void VerticalCollisions(ref Vector2 moveAmount)
@@ -66,8 +67,13 @@ namespace Buriola._2D_Physics
 
         private void HorizontalCollisions(ref Vector2 moveAmount)
         {
-            float directionX = Mathf.Sign(moveAmount.x);
+            float directionX = CollisionInfo.FaceDirection;
             float rayLength = Mathf.Abs(moveAmount.x) + SKIN_WIDTH;
+            
+            if(Mathf.Abs(moveAmount.x) < SKIN_WIDTH)
+            {
+                rayLength = 2 * SKIN_WIDTH;
+            }
             
             for (int i = 0; i < _horizontalRayCount; i++)
             {
@@ -183,8 +189,10 @@ namespace Buriola._2D_Physics
             
             if (moveAmount.x != 0)
             {
-                HorizontalCollisions(ref moveAmount);
+                CollisionInfo.FaceDirection = (int)Mathf.Sign(moveAmount.x);
             }
+            
+            HorizontalCollisions(ref moveAmount);
 
             if (moveAmount.y != 0)
             {
