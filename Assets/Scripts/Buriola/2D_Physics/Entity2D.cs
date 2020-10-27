@@ -77,6 +77,8 @@ namespace Buriola._2D_Physics
 
                 if (hit)
                 {
+                    if(hit.distance == 0f) continue;
+                    
                     //Checking terrain slope
                     float slopeAngle = Vector2.Angle(hit.normal, Vector2.up);
                     if (i == 0 && slopeAngle <= _maxClimbAngle)
@@ -168,7 +170,7 @@ namespace Buriola._2D_Physics
             }
         }
 
-        public void Move(Vector2 moveAmount)
+        public void Move(Vector2 moveAmount, bool standingOnPlatform = false)
         {
             UpdateRaycastOrigins();
             CollisionInfo.Reset();
@@ -190,6 +192,11 @@ namespace Buriola._2D_Physics
             }
             
             transform.Translate(moveAmount);
+
+            if (standingOnPlatform)
+            {
+                CollisionInfo.SetBelowCollision(true);
+            }
         }
     }
 }

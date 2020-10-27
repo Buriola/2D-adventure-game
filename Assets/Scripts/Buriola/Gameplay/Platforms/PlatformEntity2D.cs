@@ -10,6 +10,8 @@ namespace Buriola.Gameplay.Platforms
         [SerializeField] private LayerMask _passengerMask = default;
         [SerializeField] private Vector2 _moveAmount = Vector2.zero;
         
+        private readonly Dictionary<string, Entity2D> _passengers = new Dictionary<string, Entity2D>();
+        private readonly List<PassengerMovement> _passengerMovements = new List<PassengerMovement>();
         private readonly HashSet<Transform> _movedPassengers = new HashSet<Transform>();
 
         private Vector2 _velocity = Vector2.zero;
@@ -24,19 +26,42 @@ namespace Buriola.Gameplay.Platforms
             
             _velocity = _moveAmount * DeltaTime;
             
-            MovePassengers(_velocity);
+            CalculatePassengerMovement(_velocity);
+            
+            MovePassengers(true);
             transform.Translate(_velocity);
+            MovePassengers(false);
         }
 
-        private void MovePassengers(Vector2 velocity)
+        private void MovePassengers(bool beforeMovePlatform)
+        {
+            foreach (PassengerMovement movement in _passengerMovements)
+            {
+                if (movement.MoveBeforePlatform == beforeMovePlatform)
+                {
+                    if (_passengers.TryGetValue(movement.PassengerTransform.name, out Entity2D entity2D))
+                    {
+                        entity2D.Move(movement.Velocity, movement.StandingOnPlatform);
+                    }
+                    else
+                    {
+                        if(movement.PassengerTransform.TryGetComponent(out entity2D))
+                        {
+                            _passengers[movement.PassengerTransform.name] = entity2D;
+                            entity2D.Move(movement.Velocity, movement.StandingOnPlatform);
+                        }
+                    }
+                }
+            }
+        }
+        
+        private void CalculatePassengerMovement(Vector2 velocity)
         {
             _movedPassengers.Clear();
+            _passengerMovements.Clear();
             
-            _velocityVertically.x = 0f;
-            _velocityVertically.y = 0f;
-            
-            _velocityHorizontally.x = 0f;
-            _velocityHorizontally.y = 0f;
+            _velocityVertically = Vector2.zero;
+            _velocityHorizontally = Vector2.zero;
             
             float directionX = Mathf.Sign(velocity.x);
             float directionY = Mathf.Sign(velocity.y);
@@ -64,7 +89,15 @@ namespace Buriola.Gameplay.Platforms
                             _velocityVertically.x = pushX;
                             _velocityVertically.y = pushY;
                         
-                            hit.transform.Translate(_velocityVertically);
+                            PassengerMovement movement = new PassengerMovement()
+                            {
+                                PassengerTransform = hit.transform,
+                                Velocity = _velocityVertically,
+                                StandingOnPlatform = directionY == 1,
+                                MoveBeforePlatform = true
+                            };
+                            
+                            _passengerMovements.Add(movement);
                         }
                     }
                 }
@@ -88,12 +121,20 @@ namespace Buriola.Gameplay.Platforms
                             _movedPassengers.Add(hit.transform);
                             
                             float pushX = velocity.x - (hit.distance - SKIN_WIDTH) * directionX;
-                            float pushY = 0F;
+                            float pushY = -SKIN_WIDTH;
 
                             _velocityHorizontally.x = pushX;
                             _velocityHorizontally.y = pushY;
                             
-                            hit.transform.Translate(_velocityHorizontally);
+                            PassengerMovement movement = new PassengerMovement()
+                            {
+                                PassengerTransform = hit.transform,
+                                Velocity = _velocityHorizontally,
+                                StandingOnPlatform = false,
+                                MoveBeforePlatform = true
+                            };
+                            
+                            _passengerMovements.Add(movement);
                         }
                     }
                 }
@@ -121,11 +162,29 @@ namespace Buriola.Gameplay.Platforms
                             _velocityVertically.x = pushX;
                             _velocityVertically.y = pushY;
                         
-                            hit.transform.Translate(_velocityVertically);
+                            PassengerMovement movement = new PassengerMovement()
+                            {
+                                PassengerTransform = hit.transform,
+                                Velocity = _velocityVertically,
+                                StandingOnPlatform = true,
+                                MoveBeforePlatform = false
+                            };
+                            
+                            _passengerMovements.Add(movement);
                         }
                     }
                 }
             }
+        }
+
+        private void OnDisable()
+        {
+            _movedPassengers.Clear();
+            _passengers.Clear();
+            
+            _velocity = Vector2.zero;
+            _velocityHorizontally = Vector2.zero;
+            _velocityVertically = Vector2.zero;
         }
     }
 }
