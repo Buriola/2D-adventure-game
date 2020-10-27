@@ -347,6 +347,7 @@ MonoBehaviour:
   _jumpHeight: 3.5
   _timeToJumpApex: 0.4
   _wallSlideMaxSpeed: 3
+  _wallStickTime: 0.35
   _wallJumpClimb: {x: 7.5, y: 16}
   _wallJumpOff: {x: 8.5, y: 7}
   _wallJumpLeap: {x: 18, y: 17}

@@ -38,7 +38,6 @@ namespace Buriola.Gameplay.Player
             InputController.Instance.GameInputContext.OnMovementStart += OnMovementStart;
             InputController.Instance.GameInputContext.OnMovementEnded += OnMovementEnded;
             InputController.Instance.GameInputContext.OnActionButton0Pressed += OnJumpPressed;
-            InputController.Instance.GameInputContext.OnActionButton0Released += OnJumpEnded;
         }
 
         private void OnDisable()
@@ -46,7 +45,6 @@ namespace Buriola.Gameplay.Player
             InputController.Instance.GameInputContext.OnMovementStart -= OnMovementStart;
             InputController.Instance.GameInputContext.OnMovementEnded -= OnMovementEnded;
             InputController.Instance.GameInputContext.OnActionButton0Pressed -= OnJumpPressed;
-            InputController.Instance.GameInputContext.OnActionButton0Released -= OnJumpEnded;
         }
 
         private void Start()
@@ -75,34 +73,7 @@ namespace Buriola.Gameplay.Player
             float targetVelocityX = _xAxis * _moveSpeed;
             _velocity.x = Mathf.SmoothDamp(_velocity.x, targetVelocityX, ref _velocityXSmoothing, _entity2D.CollisionInfo.IsGrounded ? _accelerationTimeGrounded : _accelerationTimeAirborne);
             
-            _isWallSliding = false;
-            if (_entity2D.CollisionInfo.HasHorizontalCollision() && !_entity2D.CollisionInfo.IsGrounded && _velocity.y < 0)
-            {
-                _isWallSliding = true;
-                if (_velocity.y < -_wallSlideMaxSpeed)
-                {
-                    _velocity.y = -_wallSlideMaxSpeed;
-                }
-
-                if (_timeToWallUnstick > 0)
-                {
-                    _velocity.x = 0f;
-                    _velocityXSmoothing = 0f;
-                    
-                    if (_xAxis != _wallDirectionX && _xAxis != 0f)
-                    {
-                        _timeToWallUnstick -= _entity2D.FixedDeltaTime;
-                    }
-                    else
-                    {
-                        _timeToWallUnstick = _wallStickTime;
-                    }
-                }
-                else
-                {
-                    _timeToWallUnstick = _wallStickTime;
-                }
-            }
+            HandleWallJumpCooldown();
             
             _velocity.y += _gravity * _entity2D.FixedDeltaTime;
             _entity2D.Move(_velocity * _entity2D.FixedDeltaTime);
@@ -124,6 +95,20 @@ namespace Buriola.Gameplay.Player
 
         private void OnJumpPressed(CallbackContext obj)
         {
+            Jump();
+            WallJump();
+        }
+
+        private void Jump()
+        {
+            if (_entity2D.CollisionInfo.IsGrounded)
+            {
+                _velocity.y = _jumpVelocity;
+            }
+        }
+        
+        private void WallJump()
+        {
             if (_isWallSliding)
             {
                 if (_wallDirectionX == _xAxis)
@@ -142,16 +127,43 @@ namespace Buriola.Gameplay.Player
                     _velocity.y = _wallJumpLeap.y;
                 }
             }
-            
-            if (_entity2D.CollisionInfo.IsGrounded)
-            {
-                _velocity.y = _jumpVelocity;
-            }
         }
-
-        private void OnJumpEnded(CallbackContext obj)
+        
+        private void HandleWallJumpCooldown()
         {
+            _isWallSliding = false;
+
+            bool hasHorizontalCollisions = _entity2D.CollisionInfo.HasHorizontalCollision();
+            bool isGrounded = _entity2D.CollisionInfo.IsGrounded;
+            bool isFalling = _velocity.y < 0f;
             
+            if (hasHorizontalCollisions && !isGrounded && isFalling)
+            {
+                _isWallSliding = true;
+                if (_velocity.y < -_wallSlideMaxSpeed)
+                {
+                    _velocity.y = -_wallSlideMaxSpeed;
+                }
+            
+                if (_timeToWallUnstick > 0)
+                {
+                    _velocity.x = 0f;
+                    _velocityXSmoothing = 0f;
+                    
+                    if (_xAxis != _wallDirectionX && _xAxis != 0f)
+                    {
+                        _timeToWallUnstick -= _entity2D.FixedDeltaTime;
+                    }
+                    else
+                    {
+                        _timeToWallUnstick = _wallStickTime;
+                    }
+                }
+                else
+                {
+                    _timeToWallUnstick = _wallStickTime;
+                }
+            }
         }
     }
 }
