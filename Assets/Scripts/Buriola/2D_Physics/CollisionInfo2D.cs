@@ -1,4 +1,6 @@
-﻿namespace Buriola._2D_Physics
+﻿using UnityEngine;
+
+namespace Buriola._2D_Physics
 {
     public sealed class CollisionInfo2D
     {
@@ -7,15 +9,18 @@
         private bool _left;
         private bool _right;
         public bool IsClimbingSlope { get; set; }
+        public bool IsDescendingSlope { get; set; }
         public bool IsGrounded => _below;
         public float CurrentSlopeAngle { get; set; }
-        public float PreviousSlopeAngle { get; set; }
+        public float PreviousSlopeAngle { get; private set; }
+        public Vector2 PreviousVelocity { get; set; }
         
         public void Reset()
         {
             _above = _below = false;
             _left = _right = false;
             IsClimbingSlope = false;
+            IsDescendingSlope = false;
             PreviousSlopeAngle = CurrentSlopeAngle;
             CurrentSlopeAngle = 0f;
         }

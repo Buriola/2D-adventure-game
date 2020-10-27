@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace Buriola._2D_Physics
 {
@@ -18,6 +19,7 @@ namespace Buriola._2D_Physics
         [SerializeField, Range(2, 10)] private int _verticalRayCount = 4;
 
         private float _maxClimbAngle = 80f;
+        private float _maxDescendAngle = 75f;
         
         private float _horizontalRaySpacing;
         private float _verticalRaySpacing;
@@ -96,6 +98,12 @@ namespace Buriola._2D_Physics
                     float slopeAngle = Vector2.Angle(hit.normal, Vector2.up);
                     if (i == 0 && slopeAngle <= _maxClimbAngle)
                     {
+                        if (CollisionInfo.IsDescendingSlope)
+                        {
+                            CollisionInfo.IsDescendingSlope = false;
+                            moveAmount = CollisionInfo.PreviousVelocity;
+                        }
+                        
                         float distanceToSlopeStart = 0f;
                         if (slopeAngle != CollisionInfo.PreviousSlopeAngle)
                         { 
@@ -141,6 +149,41 @@ namespace Buriola._2D_Physics
                 CollisionInfo.CurrentSlopeAngle = slopeAngle;
             }
         }
+
+        private void DescendSlope(ref Vector2 moveAmount)
+        {
+            float directionX = Mathf.Sign(moveAmount.x);
+            bool isMovingLeft = directionX == -1;
+            
+            Vector2 rayOrigin = isMovingLeft ? _raycastOrigins.BottomRight : _raycastOrigins.BottomLeft;
+
+            RaycastHit2D hit = Physics2D.Raycast(rayOrigin, Vector2.down, Mathf.Infinity, _collisionMask);
+            if (hit)
+            {
+                float slopeAngle = Vector2.Angle(hit.normal, Vector2.up);
+                if (slopeAngle != 0 && slopeAngle <= _maxDescendAngle)
+                {
+                    if (Mathf.Sign(hit.normal.x) == directionX)
+                    {
+                        if (hit.distance - SKIN_WIDTH <=
+                            Mathf.Tan(slopeAngle * Mathf.Deg2Rad) * Mathf.Abs(moveAmount.x))
+                        {
+                            float moveDistance = Mathf.Abs(moveAmount.x);
+                            float descendVelocityY = Mathf.Sin(slopeAngle * Mathf.Deg2Rad) * moveDistance;
+
+                            moveAmount.x = Mathf.Cos(slopeAngle * Mathf.Deg2Rad) * moveDistance *
+                                           Mathf.Sign(moveAmount.x);
+
+                            moveAmount.y -= descendVelocityY;
+
+                            CollisionInfo.CurrentSlopeAngle = slopeAngle;
+                            CollisionInfo.IsDescendingSlope = true;
+                            CollisionInfo.SetBelowCollision(true);
+                        }
+                    }
+                }
+            }
+        }
         
         private void UpdateRaycastOrigins()
         {
@@ -166,7 +209,13 @@ namespace Buriola._2D_Physics
         {
             UpdateRaycastOrigins();
             CollisionInfo.Reset();
+            CollisionInfo.PreviousVelocity = moveAmount;
 
+            if (moveAmount.y < 0)
+            {
+                DescendSlope(ref moveAmount);
+            }
+            
             if (moveAmount.x != 0)
             {
                 HorizontalCollisions(ref moveAmount);
