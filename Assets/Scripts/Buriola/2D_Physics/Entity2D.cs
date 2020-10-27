@@ -38,8 +38,8 @@ namespace Buriola._2D_Physics
             {
                 Vector2 rayOrigin = (directionY == -1) ? _raycastOrigins.BottomLeft : _raycastOrigins.TopLeft;
                 rayOrigin += Vector2.right * (_verticalRaySpacing * i + moveAmount.x);
+                
                 RaycastHit2D hit = Physics2D.Raycast(rayOrigin, Vector2.up * directionY, rayLength, _collisionMask);
-
                 if (hit)
                 {
                     moveAmount.y = (hit.distance - SKIN_WIDTH) * directionY;
@@ -54,6 +54,27 @@ namespace Buriola._2D_Physics
                     bool below = directionY == -1;
                     bool above = directionY == 1;
                     CollisionInfo.SetVerticalCollisions(above, below);
+                }
+            }
+
+            //We need to check if the slope angle changed during the climb and update it
+            if (CollisionInfo.IsClimbingSlope)
+            {
+                float directionX = Mathf.Sign(moveAmount.x);
+                rayLength = Mathf.Abs(moveAmount.x) + SKIN_WIDTH;
+                bool isMovingLeft = directionX == -1;
+                
+                Vector2 rayOrigin = (isMovingLeft ? _raycastOrigins.BottomLeft : _raycastOrigins.BottomRight) + Vector2.up * moveAmount.y;
+
+                RaycastHit2D hit = Physics2D.Raycast(rayOrigin, Vector2.right * directionX, rayLength, _collisionMask);
+                if (hit)
+                {
+                    float slopeAngle = Vector2.Angle(hit.normal, Vector2.up);
+                    if (slopeAngle != CollisionInfo.CurrentSlopeAngle)
+                    {
+                        moveAmount.x = (hit.distance - SKIN_WIDTH) * directionX;
+                        CollisionInfo.CurrentSlopeAngle = slopeAngle;
+                    }
                 }
             }
         }
