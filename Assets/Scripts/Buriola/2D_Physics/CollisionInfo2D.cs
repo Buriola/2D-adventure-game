@@ -6,11 +6,18 @@
         private bool _below;
         private bool _left;
         private bool _right;
+        public bool IsClimbingSlope { get; set; }
+        public bool IsGrounded => _below;
+        public float CurrentSlopeAngle { get; set; }
+        public float PreviousSlopeAngle { get; set; }
         
         public void Reset()
         {
             _above = _below = false;
             _left = _right = false;
+            IsClimbingSlope = false;
+            PreviousSlopeAngle = CurrentSlopeAngle;
+            CurrentSlopeAngle = 0f;
         }
         
         public void SetVerticalCollisions(bool above, bool below)
@@ -25,6 +32,11 @@
             _right = right;
         }
         
+        public void SetBelowCollision(bool value)
+        {
+            _below = value;
+        }
+
         public bool HasVerticalCollision()
         {
             return _above || _below;
@@ -33,11 +45,6 @@
         public bool HasHorizontalCollision()
         {
             return _left || _right;
-        }
-
-        public bool IsGrounded()
-        {
-            return _below;
         }
     }
 }

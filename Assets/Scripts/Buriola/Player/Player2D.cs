@@ -53,7 +53,7 @@ namespace Buriola.Player
 
         private void Update()
         {
-            bool isGrounded = _entity2D.CollisionInfo.IsGrounded();
+            bool isGrounded = _entity2D.CollisionInfo.IsGrounded;
             
             if (isGrounded)
             {
@@ -68,7 +68,7 @@ namespace Buriola.Player
             _velocity.y += _gravity * _delta;
             
             float targetVelocityX = _xAxis * _moveSpeed;
-            _velocity.x = Mathf.SmoothDamp(_velocity.x, targetVelocityX, ref _velocityXSmoothing, _entity2D.CollisionInfo.IsGrounded() ? _accelerationTimeGrounded : _accelerationTimeAirborne);
+            _velocity.x = Mathf.SmoothDamp(_velocity.x, targetVelocityX, ref _velocityXSmoothing, _entity2D.CollisionInfo.IsGrounded ? _accelerationTimeGrounded : _accelerationTimeAirborne);
             
             _entity2D.Move(_velocity * _delta);
         }
@@ -89,7 +89,7 @@ namespace Buriola.Player
 
         private void OnJumpPressed(CallbackContext obj)
         {
-            if (_isJumping || !_entity2D.CollisionInfo.IsGrounded()) return;
+            if (_isJumping || !_entity2D.CollisionInfo.IsGrounded) return;
             
             _isJumping = true;
             _velocity.y = _jumpVelocity;

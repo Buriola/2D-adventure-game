@@ -17,6 +17,8 @@ namespace Buriola._2D_Physics
         [SerializeField, Range(2, 10)] private int _horizontalRayCount = 4;
         [SerializeField, Range(2, 10)] private int _verticalRayCount = 4;
 
+        private float _maxClimbAngle = 80f;
+        
         private float _horizontalRaySpacing;
         private float _verticalRaySpacing;
 
@@ -43,12 +45,17 @@ namespace Buriola._2D_Physics
                     moveAmount.y = (hit.distance - SKIN_WIDTH) * directionY;
                     rayLength = hit.distance;
 
+                    if (CollisionInfo.IsClimbingSlope)
+                    {
+                        moveAmount.x = moveAmount.y / Mathf.Tan(CollisionInfo.CurrentSlopeAngle * Mathf.Deg2Rad) *
+                                       Mathf.Sign(moveAmount.x);
+                    }
+                    
                     bool below = directionY == -1;
                     bool above = directionY == 1;
                     CollisionInfo.SetVerticalCollisions(above, below);
                 }
             }
-
         }
 
         private void HorizontalCollisions(ref Vector2 moveAmount)
@@ -64,13 +71,53 @@ namespace Buriola._2D_Physics
 
                 if (hit)
                 {
-                    moveAmount.x = (hit.distance - SKIN_WIDTH) * directionX;
-                    rayLength = hit.distance;
+                    //Checking terrain slope
+                    float slopeAngle = Vector2.Angle(hit.normal, Vector2.up);
+                    if (i == 0 && slopeAngle <= _maxClimbAngle)
+                    {
+                        float distanceToSlopeStart = 0f;
+                        if (slopeAngle != CollisionInfo.PreviousSlopeAngle)
+                        { 
+                            distanceToSlopeStart = hit.distance - SKIN_WIDTH;
+                            moveAmount.x -= distanceToSlopeStart * directionX;
+                        }
+                        ClimbSlope(ref moveAmount, slopeAngle);
+                        moveAmount.x += distanceToSlopeStart * directionX;
+                    }
 
-                    bool left = directionX == -1;
-                    bool right = directionX == 1;
-                    CollisionInfo.SetHorizontalCollisions(left, right);
+                    if (!CollisionInfo.IsClimbingSlope || slopeAngle > _maxClimbAngle)
+                    {
+                        moveAmount.x = (hit.distance - SKIN_WIDTH) * directionX;
+                        rayLength = hit.distance;
+
+                        if (CollisionInfo.IsClimbingSlope)
+                        {
+                            moveAmount.y = Mathf.Tan(CollisionInfo.CurrentSlopeAngle * Mathf.Deg2Rad) *
+                                           Mathf.Abs(moveAmount.x);
+                        }
+                        
+                        bool left = directionX == -1;
+                        bool right = directionX == 1;
+                        CollisionInfo.SetHorizontalCollisions(left, right);
+                    }
                 }
+            }
+        }
+
+        private void ClimbSlope(ref Vector2 moveAmount, float slopeAngle)
+        {
+            float moveDistance = Mathf.Abs(moveAmount.x);
+            float climbVelocityY = Mathf.Sin(slopeAngle * Mathf.Deg2Rad) * moveDistance;
+
+            // Check if entity is jumping
+            if (moveAmount.y <= climbVelocityY)
+            {
+                moveAmount.y = climbVelocityY;
+                moveAmount.x = Mathf.Cos(slopeAngle * Mathf.Deg2Rad) * moveDistance * Mathf.Sign(moveAmount.x);
+                
+                CollisionInfo.SetBelowCollision(true);
+                CollisionInfo.IsClimbingSlope = true;
+                CollisionInfo.CurrentSlopeAngle = slopeAngle;
             }
         }
         

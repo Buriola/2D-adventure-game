@@ -342,6 +342,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _moveSpeed: 4
+  _accelerationTimeAirborne: 0.2
+  _accelerationTimeGrounded: 0.1
   _jumpHeight: 3.5
   _timeToJumpApex: 0.4
 --- !u!1 &904876535
@@ -549,10 +551,10 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1199711709}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 4.52, y: -1.2, z: 0.31835938}
-  m_LocalScale: {x: 3.937954, y: 1, z: 1}
+  m_LocalRotation: {x: -0, y: -0, z: 0.41527647, w: 0.90969527}
+  m_LocalPosition: {x: 3.79, y: -0.059999887, z: 0.31835938}
+  m_LocalScale: {x: 8.734708, y: 0.93282217, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 3
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 49.073}
