@@ -298,11 +298,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 31ba8737de10b9a4987414635589baa3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _collisionMask:
+  CollisionMask:
     serializedVersion: 2
     m_Bits: 512
-  _horizontalRayCount: 4
-  _verticalRayCount: 4
+  _rayCount: 4
+  Velocity: {x: 0, y: 0}
 --- !u!61 &822648620
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -342,9 +342,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _moveSpeed: 4
-  _accelerationTimeAirborne: 0.2
   _accelerationTimeGrounded: 0.1
-  _jumpHeight: 3.5
+  _maxClimbAngle: 80
+  _maxDescendAngle: 75
+  _accelerationTimeAirborne: 0.2
+  _maxJumpHeight: 4
+  _minJumpHeight: 1
   _timeToJumpApex: 0.4
   _wallSlideMaxSpeed: 3
   _wallStickTime: 0.35
@@ -688,7 +691,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1402625062
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -701,22 +704,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b992503263fd04b40a9b4b1bdefc9840, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _collisionMask:
+  CollisionMask:
     serializedVersion: 2
     m_Bits: 0
-  _horizontalRayCount: 4
-  _verticalRayCount: 4
+  _rayCount: 4
   _passengerMask:
     serializedVersion: 2
     m_Bits: 256
   _isCyclic: 0
-  _speed: 2
-  _easeAmount: 0
-  _waitTime: 0.5
+  _speed: 2.5
+  _easeAmount: 0.4
+  _waitTime: 0
   _localWaypoints:
   - {x: 0, y: 0}
-  - {x: 2.5, y: 2.5}
-  - {x: 5, y: 0}
+  - {x: 0, y: 5}
 --- !u!23 &1402625063
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -772,7 +773,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1402625061}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -2.38, y: -3.76, z: -0.422}
+  m_LocalPosition: {x: -1.39, y: 0.79, z: -0.422}
   m_LocalScale: {x: 3, y: 0.5, z: 1}
   m_Children: []
   m_Father: {fileID: 0}

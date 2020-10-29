@@ -104,14 +104,14 @@ namespace Buriola.Gameplay.Platforms
                 {
                     if (_passengers.TryGetValue(movement.PassengerTransform.name, out Entity2D entity2D))
                     {
-                        entity2D.Move(movement.Velocity, movement.StandingOnPlatform);
+                        entity2D.Velocity = movement.Velocity;
                     }
                     else
                     {
                         if(movement.PassengerTransform.TryGetComponent(out entity2D))
                         {
                             _passengers[movement.PassengerTransform.name] = entity2D;
-                            entity2D.Move(movement.Velocity, movement.StandingOnPlatform);
+                            entity2D.Velocity = movement.Velocity;
                         }
                     }
                 }
@@ -134,7 +134,7 @@ namespace Buriola.Gameplay.Platforms
             {
                 float rayLength = Mathf.Abs(velocity.y) + SKIN_WIDTH;
 
-                for (int i = 0; i < _verticalRayCount; i++)
+                for (int i = 0; i < _rayCount; i++)
                 {
                     Vector2 rayOrigin = (directionY == -1) ? _raycastOrigins.BottomLeft : _raycastOrigins.TopLeft;
                     rayOrigin += Vector2.right * (_verticalRaySpacing * i);
@@ -171,7 +171,7 @@ namespace Buriola.Gameplay.Platforms
             {
                 float rayLength = Mathf.Abs(velocity.x) + SKIN_WIDTH;
 
-                for (int i = 0; i < _horizontalRayCount; i++)
+                for (int i = 0; i < _rayCount; i++)
                 {
                     Vector2 rayOrigin = (directionX == -1) ? _raycastOrigins.BottomLeft : _raycastOrigins.BottomRight;
                     rayOrigin += Vector2.up * (_horizontalRaySpacing * i);
@@ -208,7 +208,7 @@ namespace Buriola.Gameplay.Platforms
             {
                 float rayLength = SKIN_WIDTH * 2f;
 
-                for (int i = 0; i < _verticalRayCount; i++)
+                for (int i = 0; i < _rayCount; i++)
                 {
                     Vector2 rayOrigin = _raycastOrigins.TopLeft + Vector2.right * (_verticalRaySpacing * i);
 
