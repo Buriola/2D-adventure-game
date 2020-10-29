@@ -94,7 +94,7 @@ namespace Buriola._2D_Physics
 
         private void HorizontalCollisions(ref Vector2 moveAmount)
         {
-            float directionX = moveAmount.x;
+            float directionX = Mathf.Sign(moveAmount.x);
             float rayLength = Mathf.Abs(moveAmount.x) + SKIN_WIDTH;
             
             if(Mathf.Abs(moveAmount.x) < SKIN_WIDTH)
@@ -110,6 +110,8 @@ namespace Buriola._2D_Physics
                 RaycastHit2D hit = Physics2D.Raycast(rayOrigin, Vector2.right * directionX, rayLength, CollisionMask);
                 if (hit)
                 {
+                    if (hit.distance == 0f) continue;
+                    
                     _collisionInfo.HorizontalCollisionHits[i] = hit;
                     
                     // if (i == 0 && slopeAngle <= _maxClimbAngle)
@@ -146,6 +148,11 @@ namespace Buriola._2D_Physics
                     _collisionInfo.SetSlopeAngle(slopeAngle);
                 }
             }
+        }
+
+        public void SetCollisionBelow(bool value)
+        {
+            _collisionInfo.SetBelowCollision(value);
         }
     }
 }

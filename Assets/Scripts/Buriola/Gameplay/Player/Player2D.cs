@@ -1,4 +1,5 @@
-﻿using System.Security.Cryptography;
+﻿using System;
+using System.Security.Cryptography;
 using UnityEngine;
 using Buriola._2D_Physics;
 using Buriola.InputSystem;
@@ -41,7 +42,6 @@ namespace Buriola.Gameplay.Player
         private float _slopeAngle;
         
         private bool _isWallSliding;
-        private int _faceDirection;
         private int _wallDirectionX;
 
         private bool _isGrounded;
@@ -72,33 +72,30 @@ namespace Buriola.Gameplay.Player
             _maxJumpVelocity = Mathf.Abs(_gravity) * _timeToJumpApex;
             _minJumpVelocity = Mathf.Sqrt(2 * Mathf.Abs(_gravity) * _minJumpHeight);
             _timeToWallUnstick = _wallStickTime;
-            _faceDirection = 1;
         }
 
-        private void Update()
-        {             
+        private void FixedUpdate()
+        {
+            _wallDirectionX = _entity2D.HasCollisionLeft ? -1 : 1;
+
             _isGrounded = _entity2D.HasCollisionBelow;
             
             if (_isGrounded)
             {
                 _velocity.y = 0f;
             }
-        }
-
-        private void FixedUpdate()
-        {
-            _wallDirectionX = _entity2D.HasCollisionLeft ? -1 : 1;
             
             Move();
             //ClimbSlope();
             //DescendSlope();
             
-            if (WallSliding())
-            {
-                HandleWallJumpCooldown();
-            }
+            // if (WallSliding())
+            // {
+            //     HandleWallJumpCooldown();
+            // }
             
             _entity2D.Velocity = _velocity * _entity2D.FixedDeltaTime;
+            _velocity.y += _gravity * _entity2D.FixedDeltaTime;
         }
 
         private void OnMovementStart(CallbackContext obj)
@@ -131,7 +128,6 @@ namespace Buriola.Gameplay.Player
         {
             float targetVelocityX = _inputAxis.x * _moveSpeed;
             _velocity.x = Mathf.SmoothDamp(_velocity.x, targetVelocityX, ref _velocityXSmoothing, _entity2D.HasCollisionBelow ? _accelerationTimeGrounded : _accelerationTimeAirborne);
-            _velocity.y += _gravity * _entity2D.FixedDeltaTime;
         }
         
         private void ClimbSlope()

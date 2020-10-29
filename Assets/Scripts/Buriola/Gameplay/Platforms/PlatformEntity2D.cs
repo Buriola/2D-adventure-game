@@ -39,9 +39,9 @@ namespace Buriola.Gameplay.Platforms
             }
         }
 
-        protected override void Update()
+        protected override void FixedUpdate()
         {
-            base.Update();
+            base.FixedUpdate();
             
             UpdateRaycastOrigins();
             
@@ -63,7 +63,7 @@ namespace Buriola.Gameplay.Platforms
             int toWaypointIndex = (_fromWaypointIndex + 1) % _globalWaypoints.Length;
             float distanceBetweenWaypoints = Vector2.Distance(_globalWaypoints[_fromWaypointIndex], _globalWaypoints[toWaypointIndex]);
 
-            _percentBetweenWaypoints += DeltaTime * _speed / distanceBetweenWaypoints;
+            _percentBetweenWaypoints += FixedDeltaTime * _speed / distanceBetweenWaypoints;
             _percentBetweenWaypoints = Mathf.Clamp01(_percentBetweenWaypoints);
 
             float easedPercent = Ease(_percentBetweenWaypoints);
