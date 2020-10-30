@@ -1,4 +1,5 @@
-﻿using Buriola.Gameplay.Animations;
+﻿using Buriola._2D_Physics;
+using Buriola.Gameplay.Animations;
 using Buriola.Gameplay.Player.Data;
 using Buriola.Gameplay.Player.FSM;
 using Buriola.Gameplay.Player.FSM.SubStates;
@@ -12,7 +13,10 @@ namespace Buriola.Gameplay.Player
     [DisallowMultipleComponent]
     public class PlayerController2D : MonoBehaviour
     {
+        private RaycastOrigins2D _raycastOrigins;
+        private BoxCollider2D _collider;
         [SerializeField] private PlayerData _playerData = null;
+        [SerializeField] private Vector2 _groundCheckPoint = Vector2.zero;
 
         public Rigidbody2D Rb2d { get; private set; }
         public Vector2 CurrentVelocity { get; private set; }
@@ -21,9 +25,13 @@ namespace Buriola.Gameplay.Player
         public PlayerInputHandler InputHandler { get; private set; }
         public PlayerIdleState IdleState { get; private set; }
         public PlayerMoveState MoveState { get; private set; }
+        public PlayerJumpState JumpState { get; private set; }
+        public PlayerInAirState InAirState { get; private set; }
+        public PlayerLandState LandState { get; private set; }
         
         public int DirectionX { get; private set; }
 
+        private Vector2 _globalGroundCheckPoint;
         private Vector2 _previousVelocity;
         private Vector2 _velocity;
         private Vector2 _inputAxis;
@@ -31,6 +39,7 @@ namespace Buriola.Gameplay.Player
         private float _gravity;
         private float _maxJumpVelocity;
         private float _minJumpVelocity;
+        private float _verticalRaySpacing;
         
         private float _timeToWallUnstick;
         private float _slopeAngle;
@@ -47,6 +56,9 @@ namespace Buriola.Gameplay.Player
             StateMachine = new PlayerStateMachine();
             IdleState = new PlayerIdleState(this, StateMachine, _playerData, AnimationConstants.PLAYER_IDLE);
             MoveState = new PlayerMoveState(this, StateMachine, _playerData, AnimationConstants.PLAYER_MOVING);
+            JumpState = new PlayerJumpState(this, StateMachine, _playerData, AnimationConstants.PLAYER_JUMP);
+            InAirState = new PlayerInAirState(this, StateMachine, _playerData, AnimationConstants.PLAYER_IN_AIR);
+            LandState = new PlayerLandState(this, StateMachine, _playerData, AnimationConstants.PLAYER_LAND);
         }
 
         private void Start()
@@ -54,17 +66,11 @@ namespace Buriola.Gameplay.Player
             Rb2d = GetComponent<Rigidbody2D>();
             AnimController = GetComponent<AnimationController>();
             InputHandler = GetComponent<PlayerInputHandler>();
-
             DirectionX = 1;
 
-            StateMachine.Initialize(IdleState);
-
-            _gravity = -(2 * _playerData.MaxJumpHeight) / Mathf.Pow(_playerData.TimeToJumpApex, 2);
-            Physics2D.gravity = new Vector2(0f, _gravity);
+            _globalGroundCheckPoint = _groundCheckPoint + (Vector2)transform.position;
             
-            // _maxJumpVelocity = Mathf.Abs(_gravity) * _timeToJumpApex;
-            // _minJumpVelocity = Mathf.Sqrt(2 * Mathf.Abs(_gravity) * _minJumpHeight);
-            // _timeToWallUnstick = _wallStickTime;
+            StateMachine.Initialize(IdleState);
         }
 
         private void Update()
@@ -78,6 +84,24 @@ namespace Buriola.Gameplay.Player
             StateMachine.CurrentState.OnPhysicsUpdate();
         }
 
+        private void OnDrawGizmosSelected()
+        {
+            if (_playerData != null)
+            {
+                Gizmos.color = Color.yellow;
+                Vector2 globalWaypointPos = _groundCheckPoint + (Vector2)transform.position;
+                Gizmos.DrawWireSphere(globalWaypointPos, _playerData.GroundCheckRadius);
+            }
+        }
+        
+        public bool IsGrounded()
+        {
+            return Physics2D.OverlapCircle(_groundCheckPoint + (Vector2)transform.position, _playerData.GroundCheckRadius, _playerData.CollisionMask);;
+        }
+        
+        private void AnimationTrigger() => StateMachine.CurrentState.AnimationTrigger();
+        private void AnimationFinishTrigger() => StateMachine.CurrentState.AnimationFinishTrigger();
+        
         public void SetVelocity(Vector2 velocity)
         {
             _velocity = velocity;

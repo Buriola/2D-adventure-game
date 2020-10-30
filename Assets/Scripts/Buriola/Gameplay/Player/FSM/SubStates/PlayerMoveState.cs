@@ -16,15 +16,15 @@ namespace Buriola.Gameplay.Player.FSM.SubStates
         {
             base.OnUpdate();
 
-            float targetVelocityX = RawInputX * _playerData.MoveSpeed;
-            float xMovement = Mathf.SmoothDamp(_playerController.CurrentVelocity.x, targetVelocityX, ref _velocityXSmoothing, _playerData.AccelerationTimeGrounded);
+            float targetVelocityX = RawInputX * PlayerData.MoveSpeed;
+            float xMovement = Mathf.SmoothDamp(PlayerController.CurrentVelocity.x, targetVelocityX, ref _velocityXSmoothing, PlayerData.AccelerationTimeGrounded);
             
-            _playerController.CheckIfShouldFlip(RawInputX);
-            _playerController.SetVelocityX(xMovement);
+            PlayerController.CheckIfShouldFlip(RawInputX);
+            PlayerController.SetVelocityX(xMovement);
 
             if (RawInputX == 0f)
             {
-                _stateMachine.ChangeState(_playerController.IdleState);
+                StateMachine.ChangeState(PlayerController.IdleState);
             }
         }
     }

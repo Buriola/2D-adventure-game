@@ -13,7 +13,7 @@ namespace Buriola.Gameplay.Player.FSM.SubStates
         {
             base.OnEnter();
             
-            _playerController.SetVelocityX(0f);
+            PlayerController.SetVelocityX(0f);
         }
 
         public override void OnUpdate()
@@ -22,7 +22,7 @@ namespace Buriola.Gameplay.Player.FSM.SubStates
 
             if (Input.x != 0f)
             {
-                _stateMachine.ChangeState(_playerController.MoveState);
+                StateMachine.ChangeState(PlayerController.MoveState);
             }
         }
     }

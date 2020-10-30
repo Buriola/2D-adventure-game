@@ -6,6 +6,8 @@ namespace Buriola.Gameplay.Player.Data
     public class PlayerData : ScriptableObject
     {
         [Header("Movement")]
+        public LayerMask CollisionMask;
+        public float GroundCheckRadius = 1f;
         public float MoveSpeed = 4f; 
         public float AccelerationTimeGrounded = 0.1f;
         public float MaxClimbAngle = 80f;

@@ -349,6 +349,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _playerData: {fileID: 11400000, guid: 202625ade2ab0c347b957c724375e7a7, type: 2}
+  _groundCheckPoint: {x: 0, y: -0.05}
 --- !u!114 &822648622
 MonoBehaviour:
   m_ObjectHideFlags: 0

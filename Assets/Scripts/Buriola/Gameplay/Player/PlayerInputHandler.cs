@@ -10,7 +10,7 @@ namespace Buriola.Gameplay.Player
         public Vector2 MovementAxis { get; private set; }
         public float RawInputX { get; private set; }
         public float RawInputY { get; private set; }
-        public bool IsJumping { get; private set; }
+        public bool JumpInput { get; private set; }
 
         private void OnEnable()
         {
@@ -45,12 +45,12 @@ namespace Buriola.Gameplay.Player
 
         private void OnJumpPressed(CallbackContext obj)
         {
-            IsJumping = true;
+            JumpInput = true;
         }
 
         private void OnJumpEnded(CallbackContext obj)
         {
-            IsJumping = false;
+            JumpInput = false;
         }
     }
 }

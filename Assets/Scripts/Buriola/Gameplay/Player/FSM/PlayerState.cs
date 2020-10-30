@@ -5,28 +5,29 @@ namespace Buriola.Gameplay.Player.FSM
 {
     public class PlayerState
     {
-        protected PlayerController2D _playerController;
-        protected PlayerStateMachine _stateMachine;
-        protected PlayerData _playerData;
+        protected PlayerController2D PlayerController;
+        protected PlayerStateMachine StateMachine;
+        protected PlayerData PlayerData;
 
-        protected float _startTime;
-        protected string _animationName;
+        protected bool IsAnimationFinished;
+        protected float StartTime;
+        protected string AnimationName;
         
         public PlayerState(PlayerController2D player, PlayerStateMachine stateMachine, PlayerData data, string animationName)
         {
-            _playerController = player;
-            _stateMachine = stateMachine;
-            _playerData = data;
-            _animationName = animationName;
+            PlayerController = player;
+            StateMachine = stateMachine;
+            PlayerData = data;
+            AnimationName = animationName;
         }
 
         public virtual void OnEnter()
         {
             DoChecks();
             
-            _playerController.AnimController.PlayAnimation(_animationName);
-            
-            _startTime = Time.time;
+            PlayerController.AnimController.PlayAnimation(AnimationName);
+            StartTime = Time.time;
+            IsAnimationFinished = false;
         }
 
         public virtual void OnUpdate()
@@ -41,12 +42,11 @@ namespace Buriola.Gameplay.Player.FSM
 
         public virtual void OnExit()
         {
-            _playerController.AnimController.StopAnimation();
+            PlayerController.AnimController.StopAnimation();
         }
 
-        public virtual void DoChecks()
-        {
-            
-        }
+        public virtual void DoChecks() { }
+        public virtual void AnimationTrigger() { }
+        public virtual void AnimationFinishTrigger() => IsAnimationFinished = true;
     }
 }
