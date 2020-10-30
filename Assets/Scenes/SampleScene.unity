@@ -286,23 +286,27 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &822648619
-MonoBehaviour:
+--- !u!50 &822648619
+Rigidbody2D:
+  serializedVersion: 4
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 822648615}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 31ba8737de10b9a4987414635589baa3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  CollisionMask:
-    serializedVersion: 2
-    m_Bits: 512
-  _rayCount: 4
-  Velocity: {x: 0, y: 0}
+  m_BodyType: 0
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDrag: 0
+  m_AngularDrag: 999
+  m_GravityScale: 1
+  m_Material: {fileID: 6200000, guid: bb205138653dc0c42b44b1d94264c605, type: 2}
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 1
+  m_Constraints: 4
 --- !u!61 &822648620
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -341,7 +345,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cde65abde6b16ac4f8652fb4f917fe42, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _moveSpeed: 4
+  _moveSpeed: 6
   _accelerationTimeGrounded: 0.1
   _maxClimbAngle: 80
   _maxDescendAngle: 75
@@ -691,7 +695,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1402625062
 MonoBehaviour:
   m_ObjectHideFlags: 0

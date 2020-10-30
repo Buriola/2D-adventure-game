@@ -1,17 +1,15 @@
-﻿using System;
-using System.Security.Cryptography;
-using UnityEngine;
+﻿using UnityEngine;
 using Buriola._2D_Physics;
 using Buriola.InputSystem;
 using CallbackContext = UnityEngine.InputSystem.InputAction.CallbackContext;
 
 namespace Buriola.Gameplay.Player
 {
-    [RequireComponent(typeof(Entity2D))]
+    [RequireComponent(typeof(Rigidbody2D))]
     [DisallowMultipleComponent]
     public class Player2D : MonoBehaviour
     {
-        private Entity2D _entity2D;
+        private Rigidbody2D _rb2d;
 
         [SerializeField] private float _moveSpeed = 4f;
         [SerializeField] private float _accelerationTimeGrounded = 0.1f;
@@ -66,9 +64,10 @@ namespace Buriola.Gameplay.Player
 
         private void Start()
         {
-            _entity2D = GetComponent<Entity2D>();
+            _rb2d = GetComponent<Rigidbody2D>();
 
             _gravity = -(2 * _maxJumpHeight) / Mathf.Pow(_timeToJumpApex, 2);
+            Physics2D.gravity = new Vector2(0f, _gravity);
             _maxJumpVelocity = Mathf.Abs(_gravity) * _timeToJumpApex;
             _minJumpVelocity = Mathf.Sqrt(2 * Mathf.Abs(_gravity) * _minJumpHeight);
             _timeToWallUnstick = _wallStickTime;
@@ -76,26 +75,7 @@ namespace Buriola.Gameplay.Player
 
         private void FixedUpdate()
         {
-            _wallDirectionX = _entity2D.HasCollisionLeft ? -1 : 1;
-
-            _isGrounded = _entity2D.HasCollisionBelow;
-            
-            if (_isGrounded)
-            {
-                _velocity.y = 0f;
-            }
-            
             Move();
-            //ClimbSlope();
-            //DescendSlope();
-            
-            // if (WallSliding())
-            // {
-            //     HandleWallJumpCooldown();
-            // }
-            
-            _entity2D.Velocity = _velocity * _entity2D.FixedDeltaTime;
-            _velocity.y += _gravity * _entity2D.FixedDeltaTime;
         }
 
         private void OnMovementStart(CallbackContext obj)
@@ -118,71 +98,70 @@ namespace Buriola.Gameplay.Player
 
         private void OnJumpEnded(CallbackContext obj)
         {
-            if (_velocity.y > _minJumpHeight)
+            if (_rb2d.velocity.y > _minJumpHeight)
             {
-                _velocity.y = _minJumpVelocity;
+                _rb2d.velocity = new Vector2(_rb2d.velocity.x, _minJumpVelocity);
             }
         }
 
         private void Move()
         {
-            float targetVelocityX = _inputAxis.x * _moveSpeed;
-            _velocity.x = Mathf.SmoothDamp(_velocity.x, targetVelocityX, ref _velocityXSmoothing, _entity2D.HasCollisionBelow ? _accelerationTimeGrounded : _accelerationTimeAirborne);
+             float targetVelocityX = _inputAxis.x * _moveSpeed;
+             float xMovement = Mathf.SmoothDamp(_rb2d.velocity.x, targetVelocityX, ref _velocityXSmoothing, _accelerationTimeGrounded);
+             Vector2 targetVelocity = new Vector2(xMovement, _rb2d.velocity.y);
+             _rb2d.velocity = targetVelocity;
         }
         
         private void ClimbSlope()
         {
-            float moveDistance = Mathf.Abs(_velocity.x);
-            float climbVelocityY = Mathf.Sin(_entity2D.SlopeAngle * Mathf.Deg2Rad) * moveDistance;
-
-            // Check if entity is jumping
-            if (_velocity.y <= climbVelocityY)
-            {
-                _velocity.y = climbVelocityY;
-                _velocity.x = Mathf.Cos(_entity2D.SlopeAngle * Mathf.Deg2Rad) * moveDistance * Mathf.Sign(_velocity.x);
-                
-                _slopeAngle = _entity2D.SlopeAngle;
-            }
+            // float moveDistance = Mathf.Abs(_velocity.x);
+            // float climbVelocityY = Mathf.Sin(_entity2D.SlopeAngle * Mathf.Deg2Rad) * moveDistance;
+            //
+            // // Check if entity is jumping
+            // if (_velocity.y <= climbVelocityY)
+            // {
+            //     _velocity.y = climbVelocityY;
+            //     _velocity.x = Mathf.Cos(_entity2D.SlopeAngle * Mathf.Deg2Rad) * moveDistance * Mathf.Sign(_velocity.x);
+            //     
+            //     _slopeAngle = _entity2D.SlopeAngle;
+            // }
         }
         
         private void DescendSlope()
         {
-            float directionX = Mathf.Sign(_velocity.x);
-            bool isMovingLeft = directionX == -1;
-            
-            Vector2 rayOrigin = isMovingLeft ? _entity2D.RayOrigins.BottomRight : _entity2D.RayOrigins.BottomLeft;
-
-            RaycastHit2D hit = Physics2D.Raycast(rayOrigin, Vector2.down, Mathf.Infinity, _entity2D.CollisionMask);
-            if (hit)
-            {
-                float slopeAngle = Vector2.Angle(hit.normal, Vector2.up);
-                if (slopeAngle != 0 && slopeAngle <= _maxDescendAngle)
-                {
-                    if (Mathf.Sign(hit.normal.x) == directionX)
-                    {
-                        if (hit.distance - BaseEntity2D.SKIN_WIDTH <=
-                            Mathf.Tan(slopeAngle * Mathf.Deg2Rad) * Mathf.Abs(_velocity.x))
-                        {
-                            float moveDistance = Mathf.Abs(_velocity.x);
-                            float descendVelocityY = Mathf.Sin(slopeAngle * Mathf.Deg2Rad) * moveDistance;
-
-                            _velocity.x = Mathf.Cos(slopeAngle * Mathf.Deg2Rad) * moveDistance *
-                                           Mathf.Sign(_velocity.x);
-
-                            _velocity.y -= descendVelocityY;
-                            _slopeAngle = slopeAngle;
-                        }
-                    }
-                }
-            }
+            // float directionX = Mathf.Sign(_velocity.x);
+            // bool isMovingLeft = directionX == -1;
+            //
+            // Vector2 rayOrigin = isMovingLeft ? _entity2D.RayOrigins.BottomRight : _entity2D.RayOrigins.BottomLeft;
+            //
+            // RaycastHit2D hit = Physics2D.Raycast(rayOrigin, Vector2.down, Mathf.Infinity, _entity2D.CollisionMask);
+            // if (hit)
+            // {
+            //     float slopeAngle = Vector2.Angle(hit.normal, Vector2.up);
+            //     if (slopeAngle != 0 && slopeAngle <= _maxDescendAngle)
+            //     {
+            //         if (Mathf.Sign(hit.normal.x) == directionX)
+            //         {
+            //             if (hit.distance - BaseEntity2D.SKIN_WIDTH <=
+            //                 Mathf.Tan(slopeAngle * Mathf.Deg2Rad) * Mathf.Abs(_velocity.x))
+            //             {
+            //                 float moveDistance = Mathf.Abs(_velocity.x);
+            //                 float descendVelocityY = Mathf.Sin(slopeAngle * Mathf.Deg2Rad) * moveDistance;
+            //
+            //                 _velocity.x = Mathf.Cos(slopeAngle * Mathf.Deg2Rad) * moveDistance *
+            //                                Mathf.Sign(_velocity.x);
+            //
+            //                 _velocity.y -= descendVelocityY;
+            //                 _slopeAngle = slopeAngle;
+            //             }
+            //         }
+            //     }
+            // }
         }
         
         private void Jump()
         {
-            if (_entity2D.HasCollisionBelow)
-            {
-                _velocity.y = _maxJumpVelocity;
-            }
+            _rb2d.velocity = new Vector2(_rb2d.velocity.x, _maxJumpVelocity);
         }
         
         private void WallJump()
@@ -209,43 +188,45 @@ namespace Buriola.Gameplay.Player
         
         private bool WallSliding()
         {
-            _isWallSliding = false;
+            // _isWallSliding = false;
+            //
+            // bool hasHorizontalCollisions = _entity2D.HasHorizontalCollision;
+            // bool isFalling = _velocity.y < 0f;
+            //
+            // if (hasHorizontalCollisions && !_isGrounded && isFalling)
+            // {
+            //     _isWallSliding = true;
+            //     if (_velocity.y < -_wallSlideMaxSpeed)
+            //     {
+            //         _velocity.y = -_wallSlideMaxSpeed;
+            //     }
+            // }
+            //
+            // return _isWallSliding;
 
-            bool hasHorizontalCollisions = _entity2D.HasHorizontalCollision;
-            bool isFalling = _velocity.y < 0f;
-            
-            if (hasHorizontalCollisions && !_isGrounded && isFalling)
-            {
-                _isWallSliding = true;
-                if (_velocity.y < -_wallSlideMaxSpeed)
-                {
-                    _velocity.y = -_wallSlideMaxSpeed;
-                }
-            }
-
-            return _isWallSliding;
+            return false;
         }
         
         private void HandleWallJumpCooldown()
         {
-            if (_timeToWallUnstick > 0)
-            {
-                _velocity.x = 0f;
-                _velocityXSmoothing = 0f;
-                    
-                if (_inputAxis.x != _wallDirectionX && _inputAxis.x != 0f)
-                {
-                    _timeToWallUnstick -= _entity2D.FixedDeltaTime;
-                }
-                else
-                {
-                    _timeToWallUnstick = _wallStickTime;
-                }
-            }
-            else
-            {
-                _timeToWallUnstick = _wallStickTime;
-            }
+            // if (_timeToWallUnstick > 0)
+            // {
+            //     _velocity.x = 0f;
+            //     _velocityXSmoothing = 0f;
+            //         
+            //     if (_inputAxis.x != _wallDirectionX && _inputAxis.x != 0f)
+            //     {
+            //         _timeToWallUnstick -= _entity2D.FixedDeltaTime;
+            //     }
+            //     else
+            //     {
+            //         _timeToWallUnstick = _wallStickTime;
+            //     }
+            // }
+            // else
+            // {
+            //     _timeToWallUnstick = _wallStickTime;
+            // }
         }
     }
 }
