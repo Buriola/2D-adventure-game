@@ -1,33 +1,30 @@
-﻿using UnityEngine;
-using Buriola._2D_Physics;
-using Buriola.InputSystem;
-using CallbackContext = UnityEngine.InputSystem.InputAction.CallbackContext;
+﻿using Buriola.Gameplay.Animations;
+using Buriola.Gameplay.Player.Data;
+using Buriola.Gameplay.Player.FSM;
+using Buriola.Gameplay.Player.FSM.SubStates;
+using UnityEngine;
 
 namespace Buriola.Gameplay.Player
 {
     [RequireComponent(typeof(Rigidbody2D))]
+    [RequireComponent(typeof(AnimationController))]
+    [RequireComponent(typeof(PlayerInputHandler))]
     [DisallowMultipleComponent]
-    public class Player2D : MonoBehaviour
+    public class PlayerController2D : MonoBehaviour
     {
-        private Rigidbody2D _rb2d;
+        [SerializeField] private PlayerData _playerData = null;
 
-        [SerializeField] private float _moveSpeed = 4f;
-        [SerializeField] private float _accelerationTimeGrounded = 0.1f;
-        [SerializeField] private float _maxClimbAngle = 80f;
-        [SerializeField] private float _maxDescendAngle = 75f;
+        public Rigidbody2D Rb2d { get; private set; }
+        public Vector2 CurrentVelocity { get; private set; }
+        public PlayerStateMachine StateMachine { get; private set; }
+        public AnimationController AnimController { get; private set; }
+        public PlayerInputHandler InputHandler { get; private set; }
+        public PlayerIdleState IdleState { get; private set; }
+        public PlayerMoveState MoveState { get; private set; }
         
-        [SerializeField] private float _accelerationTimeAirborne = 0.2f;
-        [SerializeField] private float _maxJumpHeight = 8f;
-        [SerializeField] private float _minJumpHeight = 1f;
-        [SerializeField] private float _timeToJumpApex = 0.4f;
-        
-        [SerializeField] private float _wallSlideMaxSpeed = 3f;
-        [SerializeField] private float _wallStickTime = 0.25f;
-        [SerializeField] private Vector2 _wallJumpClimb = Vector2.zero;
-        [SerializeField] private Vector2 _wallJumpOff = Vector2.zero;
-        [SerializeField] private Vector2 _wallJumpLeap = Vector2.zero;
 
         private Vector2 _previousVelocity;
+        
         private Vector2 _velocity;
         
         private Vector2 _inputAxis;
@@ -35,7 +32,7 @@ namespace Buriola.Gameplay.Player
         private float _gravity;
         private float _maxJumpVelocity;
         private float _minJumpVelocity;
-        private float _velocityXSmoothing;
+        
         private float _timeToWallUnstick;
         private float _slopeAngle;
         
@@ -46,70 +43,65 @@ namespace Buriola.Gameplay.Player
         private bool _isClimbingSlope;
         private bool _isDescendingSlope;
 
-        private void OnEnable()
+        private void Awake()
         {
-            InputController.Instance.GameInputContext.OnMovementStart += OnMovementStart;
-            InputController.Instance.GameInputContext.OnMovementEnded += OnMovementEnded;
-            InputController.Instance.GameInputContext.OnActionButton0Pressed += OnJumpPressed;
-            InputController.Instance.GameInputContext.OnActionButton0Released += OnJumpEnded;
-        }
-
-        private void OnDisable()
-        {
-            InputController.Instance.GameInputContext.OnMovementStart -= OnMovementStart;
-            InputController.Instance.GameInputContext.OnMovementEnded -= OnMovementEnded;
-            InputController.Instance.GameInputContext.OnActionButton0Pressed -= OnJumpPressed;
-            InputController.Instance.GameInputContext.OnActionButton0Released -= OnJumpEnded;
+            StateMachine = new PlayerStateMachine();
+            IdleState = new PlayerIdleState(this, StateMachine, _playerData, AnimationConstants.PLAYER_IDLE);
+            MoveState = new PlayerMoveState(this, StateMachine, _playerData, AnimationConstants.PLAYER_MOVING);
         }
 
         private void Start()
         {
-            _rb2d = GetComponent<Rigidbody2D>();
+            Rb2d = GetComponent<Rigidbody2D>();
+            AnimController = GetComponent<AnimationController>();
+            InputHandler = GetComponent<PlayerInputHandler>();
 
-            _gravity = -(2 * _maxJumpHeight) / Mathf.Pow(_timeToJumpApex, 2);
+            StateMachine.Initialize(IdleState);
+
+            _gravity = -(2 * _playerData.MaxJumpHeight) / Mathf.Pow(_playerData.TimeToJumpApex, 2);
             Physics2D.gravity = new Vector2(0f, _gravity);
-            _maxJumpVelocity = Mathf.Abs(_gravity) * _timeToJumpApex;
-            _minJumpVelocity = Mathf.Sqrt(2 * Mathf.Abs(_gravity) * _minJumpHeight);
-            _timeToWallUnstick = _wallStickTime;
+            
+            // _maxJumpVelocity = Mathf.Abs(_gravity) * _timeToJumpApex;
+            // _minJumpVelocity = Mathf.Sqrt(2 * Mathf.Abs(_gravity) * _minJumpHeight);
+            // _timeToWallUnstick = _wallStickTime;
+        }
+
+        private void Update()
+        {
+            CurrentVelocity = Rb2d.velocity;
+            StateMachine.CurrentState.OnUpdate();
         }
 
         private void FixedUpdate()
         {
+            StateMachine.CurrentState.OnPhysicsUpdate();
             Move();
         }
 
-        private void OnMovementStart(CallbackContext obj)
+        public void SetVelocity(Vector2 velocity)
         {
-            _inputAxis = obj.ReadValue<Vector2>();
-            _inputAxis.Normalize();
+            _velocity = velocity;
+            Rb2d.velocity = _velocity;
+            CurrentVelocity = _velocity;
         }
 
-        private void OnMovementEnded(CallbackContext obj)
+        public void SetVelocityX(float xVelocity)
         {
-            _inputAxis = Vector2.zero;
-            _velocity.x = 0f;
+            _velocity.Set(xVelocity, CurrentVelocity.y);
+            Rb2d.velocity = _velocity;
+            CurrentVelocity = _velocity;
         }
 
-        private void OnJumpPressed(CallbackContext obj)
+        public void SetVelocityY(float yVelocity)
         {
-            Jump();
-            WallJump();
-        }
-
-        private void OnJumpEnded(CallbackContext obj)
-        {
-            if (_rb2d.velocity.y > _minJumpHeight)
-            {
-                _rb2d.velocity = new Vector2(_rb2d.velocity.x, _minJumpVelocity);
-            }
+            _velocity.Set(CurrentVelocity.x, yVelocity);
+            Rb2d.velocity = _velocity;
+            CurrentVelocity = _velocity;
         }
 
         private void Move()
         {
-             float targetVelocityX = _inputAxis.x * _moveSpeed;
-             float xMovement = Mathf.SmoothDamp(_rb2d.velocity.x, targetVelocityX, ref _velocityXSmoothing, _accelerationTimeGrounded);
-             Vector2 targetVelocity = new Vector2(xMovement, _rb2d.velocity.y);
-             _rb2d.velocity = targetVelocity;
+             
         }
         
         private void ClimbSlope()
@@ -161,29 +153,29 @@ namespace Buriola.Gameplay.Player
         
         private void Jump()
         {
-            _rb2d.velocity = new Vector2(_rb2d.velocity.x, _maxJumpVelocity);
+            //_rb2d.velocity = new Vector2(_rb2d.velocity.x, _maxJumpVelocity);
         }
         
         private void WallJump()
         {
-            if (_isWallSliding)
-            {
-                if (_wallDirectionX == _inputAxis.x)
-                {
-                    _velocity.x = -_wallDirectionX * _wallJumpClimb.x;
-                    _velocity.y = _wallJumpClimb.y;
-                }
-                else if (_inputAxis.x == 0f)
-                {
-                    _velocity.x = -_wallDirectionX * _wallJumpOff.x;
-                    _velocity.y = _wallJumpOff.y;
-                }
-                else
-                {
-                    _velocity.x = -_wallDirectionX * _wallJumpLeap.x;
-                    _velocity.y = _wallJumpLeap.y;
-                }
-            }
+            // if (_isWallSliding)
+            // {
+            //     if (_wallDirectionX == _inputAxis.x)
+            //     {
+            //         _velocity.x = -_wallDirectionX * _wallJumpClimb.x;
+            //         _velocity.y = _wallJumpClimb.y;
+            //     }
+            //     else if (_inputAxis.x == 0f)
+            //     {
+            //         _velocity.x = -_wallDirectionX * _wallJumpOff.x;
+            //         _velocity.y = _wallJumpOff.y;
+            //     }
+            //     else
+            //     {
+            //         _velocity.x = -_wallDirectionX * _wallJumpLeap.x;
+            //         _velocity.y = _wallJumpLeap.y;
+            //     }
+            // }
         }
         
         private bool WallSliding()
