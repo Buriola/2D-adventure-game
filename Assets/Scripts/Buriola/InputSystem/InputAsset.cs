@@ -224,7 +224,7 @@ namespace Buriola.InputSystem
                     ""id"": ""3fb2eb1d-4cc6-4b7e-af4b-5cdcc4074897"",
                     ""path"": ""<Gamepad>/leftStick"",
                     ""interactions"": """",
-                    ""processors"": """",
+                    ""processors"": ""StickDeadzone"",
                     ""groups"": ""Gamepad"",
                     ""action"": ""Movement"",
                     ""isComposite"": false,

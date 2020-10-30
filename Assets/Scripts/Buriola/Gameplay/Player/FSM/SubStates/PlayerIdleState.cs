@@ -20,7 +20,7 @@ namespace Buriola.Gameplay.Player.FSM.SubStates
         {
             base.OnUpdate();
 
-            if (_input.x != 0f)
+            if (Input.x != 0f)
             {
                 _stateMachine.ChangeState(_playerController.MoveState);
             }

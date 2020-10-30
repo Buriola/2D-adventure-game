@@ -5,7 +5,8 @@ namespace Buriola.Gameplay.Player.FSM.SuperStates
 {
     public class PlayerGroundedState : PlayerState
     {
-        protected Vector2 _input;
+        protected Vector2 Input;
+        protected float RawInputX;
         
         public PlayerGroundedState(PlayerController2D player, PlayerStateMachine stateMachine, PlayerData data, string animationName) : base(player, stateMachine, data, animationName)
         {
@@ -16,7 +17,8 @@ namespace Buriola.Gameplay.Player.FSM.SuperStates
         {
             base.OnUpdate();
             
-            _input = _playerController.InputHandler.MovementAxis;
+            Input = _playerController.InputHandler.MovementAxis;
+            RawInputX = _playerController.InputHandler.RawInputX;
         }
     }
 }

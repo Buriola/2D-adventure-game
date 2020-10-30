@@ -22,11 +22,10 @@ namespace Buriola.Gameplay.Player
         public PlayerIdleState IdleState { get; private set; }
         public PlayerMoveState MoveState { get; private set; }
         
+        public int DirectionX { get; private set; }
 
         private Vector2 _previousVelocity;
-        
         private Vector2 _velocity;
-        
         private Vector2 _inputAxis;
         
         private float _gravity;
@@ -56,6 +55,8 @@ namespace Buriola.Gameplay.Player
             AnimController = GetComponent<AnimationController>();
             InputHandler = GetComponent<PlayerInputHandler>();
 
+            DirectionX = 1;
+
             StateMachine.Initialize(IdleState);
 
             _gravity = -(2 * _playerData.MaxJumpHeight) / Mathf.Pow(_playerData.TimeToJumpApex, 2);
@@ -75,7 +76,6 @@ namespace Buriola.Gameplay.Player
         private void FixedUpdate()
         {
             StateMachine.CurrentState.OnPhysicsUpdate();
-            Move();
         }
 
         public void SetVelocity(Vector2 velocity)
@@ -99,9 +99,18 @@ namespace Buriola.Gameplay.Player
             CurrentVelocity = _velocity;
         }
 
-        private void Move()
+        public void CheckIfShouldFlip(float xInput)
         {
-             
+            if (xInput != 0 && xInput != DirectionX)
+            {
+                Flip();
+            }
+        }
+        
+        private void Flip()
+        {
+            DirectionX *= -1;
+            transform.Rotate(0f, 180f, 0f);
         }
         
         private void ClimbSlope()
