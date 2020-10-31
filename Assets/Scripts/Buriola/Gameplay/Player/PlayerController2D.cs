@@ -1,5 +1,4 @@
-﻿using Buriola._2D_Physics;
-using Buriola.Gameplay.Animations;
+﻿using Buriola.Gameplay.Animations;
 using Buriola.Gameplay.Player.Data;
 using Buriola.Gameplay.Player.FSM;
 using Buriola.Gameplay.Player.FSM.SubStates;
@@ -13,8 +12,6 @@ namespace Buriola.Gameplay.Player
     [DisallowMultipleComponent]
     public class PlayerController2D : MonoBehaviour
     {
-        private RaycastOrigins2D _raycastOrigins;
-        private BoxCollider2D _collider;
         [SerializeField] private PlayerData _playerData = null;
         [SerializeField] private Vector2 _groundCheckPoint = Vector2.zero;
 
@@ -36,6 +33,8 @@ namespace Buriola.Gameplay.Player
         
         public bool CanJump { get; private set; }
         private float _jumpTimer;
+        private float _gravity;
+        private Vector2 _gravityForce;
 
         private void Awake()
         {
@@ -56,6 +55,9 @@ namespace Buriola.Gameplay.Player
             DirectionX = 1;
             CanJump = true;
 
+            _gravity = -(2 * _playerData.MaxJumpHeight) / Mathf.Pow(_playerData.TimeToJumpApex, 2);
+            _gravityForce.Set(0f, _gravity);
+            
             StateMachine.Initialize(IdleState);
         }
 
@@ -70,6 +72,11 @@ namespace Buriola.Gameplay.Player
         private void FixedUpdate()
         {
             StateMachine.CurrentState.OnPhysicsUpdate();
+
+            if (!Rb2d.IsSleeping())
+            {
+                Rb2d.AddForce(_gravityForce, ForceMode2D.Force);   
+            }
         }
 
         private void OnDisable()

@@ -45,6 +45,7 @@ namespace Buriola.Gameplay.Player.FSM.SubStates
 
         private void OnJumpPressed(InputAction.CallbackContext obj)
         {
+            //Wall Jump
             if (obj.ReadValueAsButton())
             {
                 Vector2 _jumpVelocity = Vector2.zero;
