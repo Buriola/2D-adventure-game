@@ -8,9 +8,19 @@ namespace Buriola.Gameplay.Player.FSM.SubStates
         private bool _isGrounded;
         private float _rawInputX;
         private float _velocityXSmoothing;
+        private bool _animationSet;
         
-        public PlayerInAirState(PlayerController2D player, PlayerStateMachine stateMachine, PlayerData data, string animationName) : base(player, stateMachine, data, animationName)
+        public PlayerInAirState(PlayerController2D player, PlayerStateMachine stateMachine, PlayerData data, int animationHash) : base(player, stateMachine, data, animationHash)
         {
+        }
+
+        public override void OnEnter()
+        {
+            DoChecks();
+            
+            StartTime = Time.time;
+            IsAnimationFinished = false;
+            _animationSet = false;
         }
 
         public override void OnUpdate()
@@ -25,9 +35,10 @@ namespace Buriola.Gameplay.Player.FSM.SubStates
             PlayerController.CheckIfShouldFlip(_rawInputX);
             PlayerController.SetVelocityX(xMovement);
             
-            if (_isGrounded && PlayerController.CurrentVelocity.y < 0.01f)
+            if (PlayerController.CurrentVelocity.y < 0f && !_animationSet)
             {
-                StateMachine.ChangeState(PlayerController.LandState);
+                _animationSet = true;
+                PlayerController.AnimController.PlayAnimation(AnimationHash);
             }
         }
 
@@ -36,6 +47,11 @@ namespace Buriola.Gameplay.Player.FSM.SubStates
             base.DoChecks();
 
             _isGrounded = PlayerController.IsGrounded();
+            
+            if (_isGrounded && PlayerController.CurrentVelocity.y < 0.01f)
+            {
+                StateMachine.ChangeState(PlayerController.LandState);
+            }
         }
     }
 }

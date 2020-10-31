@@ -13,7 +13,7 @@ namespace Buriola.Gameplay.Player.FSM.SubStates
         private float _yPosition;
         private float _finalYPosition;
         
-        public PlayerJumpState(PlayerController2D player, PlayerStateMachine stateMachine, PlayerData data, string animationName) : base(player, stateMachine, data, animationName)
+        public PlayerJumpState(PlayerController2D player, PlayerStateMachine stateMachine, PlayerData data, int animationHash) : base(player, stateMachine, data, animationHash)
         {
             _gravity = -(2 * PlayerData.MaxJumpHeight) / Mathf.Pow(PlayerData.TimeToJumpApex, 2);
             Physics2D.gravity = new Vector2(0f, _gravity);

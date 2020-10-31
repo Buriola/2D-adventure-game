@@ -31,15 +31,7 @@ namespace Buriola.Gameplay.Player
         
         public int DirectionX { get; private set; }
 
-        private Vector2 _globalGroundCheckPoint;
-        private Vector2 _previousVelocity;
         private Vector2 _velocity;
-        private Vector2 _inputAxis;
-        
-        private float _gravity;
-        private float _maxJumpVelocity;
-        private float _minJumpVelocity;
-        private float _verticalRaySpacing;
         
         private float _timeToWallUnstick;
         private float _slopeAngle;
@@ -47,18 +39,14 @@ namespace Buriola.Gameplay.Player
         private bool _isWallSliding;
         private int _wallDirectionX;
 
-        private bool _isGrounded;
-        private bool _isClimbingSlope;
-        private bool _isDescendingSlope;
-
         private void Awake()
         {
             StateMachine = new PlayerStateMachine();
-            IdleState = new PlayerIdleState(this, StateMachine, _playerData, AnimationConstants.PLAYER_IDLE);
-            MoveState = new PlayerMoveState(this, StateMachine, _playerData, AnimationConstants.PLAYER_MOVING);
-            JumpState = new PlayerJumpState(this, StateMachine, _playerData, AnimationConstants.PLAYER_JUMP);
-            InAirState = new PlayerInAirState(this, StateMachine, _playerData, AnimationConstants.PLAYER_IN_AIR);
-            LandState = new PlayerLandState(this, StateMachine, _playerData, AnimationConstants.PLAYER_LAND);
+            IdleState = new PlayerIdleState(this, StateMachine, _playerData, AnimationConstants.PLAYER_IDLE_HASH);
+            MoveState = new PlayerMoveState(this, StateMachine, _playerData, AnimationConstants.PLAYER_MOVING_HASH);
+            JumpState = new PlayerJumpState(this, StateMachine, _playerData, AnimationConstants.PLAYER_JUMP_HASH);
+            InAirState = new PlayerInAirState(this, StateMachine, _playerData, AnimationConstants.PLAYER_AIR_HASH);
+            LandState = new PlayerLandState(this, StateMachine, _playerData, AnimationConstants.PLAYER_LAND_HASH);
         }
 
         private void Start()
@@ -68,8 +56,6 @@ namespace Buriola.Gameplay.Player
             InputHandler = GetComponent<PlayerInputHandler>();
             DirectionX = 1;
 
-            _globalGroundCheckPoint = _groundCheckPoint + (Vector2)transform.position;
-            
             StateMachine.Initialize(IdleState);
         }
 
@@ -84,7 +70,7 @@ namespace Buriola.Gameplay.Player
             StateMachine.CurrentState.OnPhysicsUpdate();
         }
 
-        private void OnDrawGizmosSelected()
+        private void OnDrawGizmos()
         {
             if (_playerData != null)
             {
@@ -94,13 +80,19 @@ namespace Buriola.Gameplay.Player
             }
         }
         
-        public bool IsGrounded()
+        private void Flip()
         {
-            return Physics2D.OverlapCircle(_groundCheckPoint + (Vector2)transform.position, _playerData.GroundCheckRadius, _playerData.CollisionMask);;
+            DirectionX *= -1;
+            transform.Rotate(0f, 180f, 0f);
         }
         
         private void AnimationTrigger() => StateMachine.CurrentState.AnimationTrigger();
         private void AnimationFinishTrigger() => StateMachine.CurrentState.AnimationFinishTrigger();
+        
+        public bool IsGrounded()
+        {
+            return Physics2D.OverlapCircle(_groundCheckPoint + (Vector2)transform.position, _playerData.GroundCheckRadius, _playerData.CollisionMask);;
+        }
         
         public void SetVelocity(Vector2 velocity)
         {
@@ -129,129 +121,6 @@ namespace Buriola.Gameplay.Player
             {
                 Flip();
             }
-        }
-        
-        private void Flip()
-        {
-            DirectionX *= -1;
-            transform.Rotate(0f, 180f, 0f);
-        }
-        
-        private void ClimbSlope()
-        {
-            // float moveDistance = Mathf.Abs(_velocity.x);
-            // float climbVelocityY = Mathf.Sin(_entity2D.SlopeAngle * Mathf.Deg2Rad) * moveDistance;
-            //
-            // // Check if entity is jumping
-            // if (_velocity.y <= climbVelocityY)
-            // {
-            //     _velocity.y = climbVelocityY;
-            //     _velocity.x = Mathf.Cos(_entity2D.SlopeAngle * Mathf.Deg2Rad) * moveDistance * Mathf.Sign(_velocity.x);
-            //     
-            //     _slopeAngle = _entity2D.SlopeAngle;
-            // }
-        }
-        
-        private void DescendSlope()
-        {
-            // float directionX = Mathf.Sign(_velocity.x);
-            // bool isMovingLeft = directionX == -1;
-            //
-            // Vector2 rayOrigin = isMovingLeft ? _entity2D.RayOrigins.BottomRight : _entity2D.RayOrigins.BottomLeft;
-            //
-            // RaycastHit2D hit = Physics2D.Raycast(rayOrigin, Vector2.down, Mathf.Infinity, _entity2D.CollisionMask);
-            // if (hit)
-            // {
-            //     float slopeAngle = Vector2.Angle(hit.normal, Vector2.up);
-            //     if (slopeAngle != 0 && slopeAngle <= _maxDescendAngle)
-            //     {
-            //         if (Mathf.Sign(hit.normal.x) == directionX)
-            //         {
-            //             if (hit.distance - BaseEntity2D.SKIN_WIDTH <=
-            //                 Mathf.Tan(slopeAngle * Mathf.Deg2Rad) * Mathf.Abs(_velocity.x))
-            //             {
-            //                 float moveDistance = Mathf.Abs(_velocity.x);
-            //                 float descendVelocityY = Mathf.Sin(slopeAngle * Mathf.Deg2Rad) * moveDistance;
-            //
-            //                 _velocity.x = Mathf.Cos(slopeAngle * Mathf.Deg2Rad) * moveDistance *
-            //                                Mathf.Sign(_velocity.x);
-            //
-            //                 _velocity.y -= descendVelocityY;
-            //                 _slopeAngle = slopeAngle;
-            //             }
-            //         }
-            //     }
-            // }
-        }
-        
-        private void Jump()
-        {
-            //_rb2d.velocity = new Vector2(_rb2d.velocity.x, _maxJumpVelocity);
-        }
-        
-        private void WallJump()
-        {
-            // if (_isWallSliding)
-            // {
-            //     if (_wallDirectionX == _inputAxis.x)
-            //     {
-            //         _velocity.x = -_wallDirectionX * _wallJumpClimb.x;
-            //         _velocity.y = _wallJumpClimb.y;
-            //     }
-            //     else if (_inputAxis.x == 0f)
-            //     {
-            //         _velocity.x = -_wallDirectionX * _wallJumpOff.x;
-            //         _velocity.y = _wallJumpOff.y;
-            //     }
-            //     else
-            //     {
-            //         _velocity.x = -_wallDirectionX * _wallJumpLeap.x;
-            //         _velocity.y = _wallJumpLeap.y;
-            //     }
-            // }
-        }
-        
-        private bool WallSliding()
-        {
-            // _isWallSliding = false;
-            //
-            // bool hasHorizontalCollisions = _entity2D.HasHorizontalCollision;
-            // bool isFalling = _velocity.y < 0f;
-            //
-            // if (hasHorizontalCollisions && !_isGrounded && isFalling)
-            // {
-            //     _isWallSliding = true;
-            //     if (_velocity.y < -_wallSlideMaxSpeed)
-            //     {
-            //         _velocity.y = -_wallSlideMaxSpeed;
-            //     }
-            // }
-            //
-            // return _isWallSliding;
-
-            return false;
-        }
-        
-        private void HandleWallJumpCooldown()
-        {
-            // if (_timeToWallUnstick > 0)
-            // {
-            //     _velocity.x = 0f;
-            //     _velocityXSmoothing = 0f;
-            //         
-            //     if (_inputAxis.x != _wallDirectionX && _inputAxis.x != 0f)
-            //     {
-            //         _timeToWallUnstick -= _entity2D.FixedDeltaTime;
-            //     }
-            //     else
-            //     {
-            //         _timeToWallUnstick = _wallStickTime;
-            //     }
-            // }
-            // else
-            // {
-            //     _timeToWallUnstick = _wallStickTime;
-            // }
         }
     }
 }

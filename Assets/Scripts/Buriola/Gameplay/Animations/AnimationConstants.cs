@@ -1,11 +1,19 @@
-﻿namespace Buriola.Gameplay.Animations
+﻿using UnityEngine;
+
+namespace Buriola.Gameplay.Animations
 {
-    public sealed class AnimationConstants
+    public static class AnimationConstants
     {
-        public const string PLAYER_IDLE = "idle";
-        public const string PLAYER_MOVING = "move";
-        public const string PLAYER_JUMP = "jump";
-        public const string PLAYER_IN_AIR = "in_air";
-        public const string PLAYER_LAND = "land";
+        private const string PLAYER_IDLE = "Idle1";
+        private const string PLAYER_MOVING = "Run1";
+        private const string PLAYER_JUMP = "Jump";
+        private const string PLAYER_IN_AIR = "InAir";
+        private const string PLAYER_LAND = "land";
+        
+        public static readonly int PLAYER_IDLE_HASH = Animator.StringToHash(PLAYER_IDLE);
+        public static readonly int PLAYER_MOVING_HASH = Animator.StringToHash(PLAYER_MOVING);
+        public static readonly int PLAYER_JUMP_HASH = Animator.StringToHash(PLAYER_JUMP);
+        public static readonly int PLAYER_AIR_HASH = Animator.StringToHash(PLAYER_IN_AIR);
+        public static readonly int PLAYER_LAND_HASH = Animator.StringToHash(PLAYER_LAND);
     }
 }

@@ -8,7 +8,7 @@ namespace Buriola.Gameplay.Player.FSM.SubStates
     {
         private float _velocityXSmoothing;
         
-        public PlayerMoveState(PlayerController2D player, PlayerStateMachine stateMachine, PlayerData data, string animationName) : base(player, stateMachine, data, animationName)
+        public PlayerMoveState(PlayerController2D player, PlayerStateMachine stateMachine, PlayerData data, int animationHash) : base(player, stateMachine, data, animationHash)
         {
         }
 

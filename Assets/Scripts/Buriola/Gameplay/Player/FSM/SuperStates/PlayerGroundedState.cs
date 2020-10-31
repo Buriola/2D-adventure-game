@@ -7,9 +7,10 @@ namespace Buriola.Gameplay.Player.FSM.SuperStates
     {
         protected Vector2 Input;
         protected float RawInputX;
-        protected bool JumpInput;
+        private bool IsGrounded;
+        private bool JumpInput;
         
-        public PlayerGroundedState(PlayerController2D player, PlayerStateMachine stateMachine, PlayerData data, string animationName) : base(player, stateMachine, data, animationName)
+        protected PlayerGroundedState(PlayerController2D player, PlayerStateMachine stateMachine, PlayerData data, int animationHash) : base(player, stateMachine, data, animationHash)
         {
             
         }
@@ -26,6 +27,18 @@ namespace Buriola.Gameplay.Player.FSM.SuperStates
             {
                 StateMachine.ChangeState(PlayerController.JumpState);
             }
+
+            if (!IsGrounded)
+            {
+                StateMachine.ChangeState(PlayerController.InAirState);
+            }
+        }
+
+        public override void DoChecks()
+        {
+            base.DoChecks();
+
+            IsGrounded = PlayerController.IsGrounded();
         }
     }
 }

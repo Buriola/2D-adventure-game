@@ -5,7 +5,7 @@ namespace Buriola.Gameplay.Player.FSM.SubStates
 {
     public sealed class PlayerIdleState : PlayerGroundedState
     {
-        public PlayerIdleState(PlayerController2D player, PlayerStateMachine stateMachine, PlayerData data, string animationName) : base(player, stateMachine, data, animationName)
+        public PlayerIdleState(PlayerController2D player, PlayerStateMachine stateMachine, PlayerData data, int animationHash) : base(player, stateMachine, data, animationHash)
         {
         }
 

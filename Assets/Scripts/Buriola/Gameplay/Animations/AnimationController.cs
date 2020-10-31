@@ -2,69 +2,25 @@
 
 namespace Buriola.Gameplay.Animations
 {
-    [RequireComponent(typeof(Animation))]
+    [RequireComponent(typeof(Animator))]
     [DisallowMultipleComponent]
     public class AnimationController : MonoBehaviour
     {
-        private Animation _animation;
+        private Animator _animator;
 
         private void Start()
         {
-             _animation = GetComponent<Animation>();
+            _animator = GetComponent<Animator>();
         }
 
-        public void PlayAnimation(string animationName)
+        public void PlayAnimation(int animationHash)
         {
-            AnimationClip clip = _animation.GetClip(animationName);
-            if (clip != null)
-            {
-                _animation.clip = clip;
-                _animation.Play();
-            }
-            else
-            {
-                Debug.LogError($"Couldn't find animation with name {animationName}");
-            }
-        }
-
-        public void SetAnimationClip(string animationName)
-        {
-            AnimationClip clip = _animation.GetClip(animationName);
-            if (clip != null)
-            {
-                _animation.clip = clip;
-            }
-            else
-            {
-                Debug.LogError($"Couldn't find animation with name {animationName}");
-            }
-        }
-
-        public void SetAnimationClip(AnimationClip clip)
-        {
-            if (clip != null)
-            {
-                _animation.clip = clip;
-            }
-            else
-            {
-                Debug.LogError($"Couldn't set clip to null, please provide a valid animation clip");
-            }
+            _animator.Play(animationHash);
         }
 
         public void StopAnimation()
         {
-            _animation.Stop();
-        }
-
-        public bool IsPlayingAnimation()
-        {
-            return _animation.isPlaying;
-        }
-
-        public float GetCurrentAnimationLength()
-        {
-            return _animation.clip.length;
+            _animator.StopPlayback();
         }
     }
 }

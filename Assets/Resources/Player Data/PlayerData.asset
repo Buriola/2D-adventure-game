@@ -15,9 +15,9 @@ MonoBehaviour:
   CollisionMask:
     serializedVersion: 2
     m_Bits: 512
-  GroundCheckRadius: 0.5
-  MoveSpeed: 5
-  AccelerationTimeGrounded: 0.1
+  GroundCheckRadius: 0.25
+  MoveSpeed: 10
+  AccelerationTimeGrounded: 0.05
   MaxClimbAngle: 80
   MaxDescendAngle: 75
   AccelerationTimeAirborne: 0.2

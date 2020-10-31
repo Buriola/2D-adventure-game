@@ -11,21 +11,21 @@ namespace Buriola.Gameplay.Player.FSM
 
         protected bool IsAnimationFinished;
         protected float StartTime;
-        protected string AnimationName;
+        protected int AnimationHash;
         
-        public PlayerState(PlayerController2D player, PlayerStateMachine stateMachine, PlayerData data, string animationName)
+        public PlayerState(PlayerController2D player, PlayerStateMachine stateMachine, PlayerData data, int animationHash)
         {
             PlayerController = player;
             StateMachine = stateMachine;
             PlayerData = data;
-            AnimationName = animationName;
+            AnimationHash = animationHash;
         }
 
         public virtual void OnEnter()
         {
             DoChecks();
             
-            PlayerController.AnimController.PlayAnimation(AnimationName);
+            PlayerController.AnimController.PlayAnimation(AnimationHash);
             StartTime = Time.time;
             IsAnimationFinished = false;
         }

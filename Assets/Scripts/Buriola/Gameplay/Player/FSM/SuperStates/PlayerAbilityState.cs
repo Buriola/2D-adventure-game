@@ -7,7 +7,7 @@ namespace Buriola.Gameplay.Player.FSM.SuperStates
         protected bool IsAbilityDone;
         private bool _isGrounded;
 
-        public PlayerAbilityState(PlayerController2D player, PlayerStateMachine stateMachine, PlayerData data, string animationName) : base(player, stateMachine, data, animationName)
+        public PlayerAbilityState(PlayerController2D player, PlayerStateMachine stateMachine, PlayerData data, int animationHash) : base(player, stateMachine, data, animationHash)
         {
         }
 
