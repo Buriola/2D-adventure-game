@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 73051c12bec0e3e4f8fbe6f383a843a6, type: 3}
   m_Name: PlayerData
   m_EditorClassIdentifier: 
-  CollisionMask:
+  GroundCollisionMask:
     serializedVersion: 2
-    m_Bits: 512
+    m_Bits: 1536
   GroundCheckRadius: 0.25
   MoveSpeed: 10
   AccelerationTimeGrounded: 0.05
@@ -24,10 +24,14 @@ MonoBehaviour:
   MaxJumpHeight: 2
   MinJumpHeight: 1
   TimeToJumpApex: 0.2
-  JumpAmount: 1
+  JumpAmount: 0
   JumpCooldown: 0.2
-  _wallSlideMaxSpeed: 3
-  _wallStickTime: 0.25
-  _wallJumpClimb: {x: 0, y: 0}
-  _wallJumpOff: {x: 0, y: 0}
-  _wallJumpLeap: {x: 0, y: 0}
+  WallCollisionMask:
+    serializedVersion: 2
+    m_Bits: 1024
+  WallDistanceCheck: 0.5
+  WallSlideMaxSpeed: 3
+  WallStickTime: 0.25
+  WallJumpClimb: {x: 10, y: 30}
+  WallJumpOff: {x: 10, y: 0}
+  WallJumpLeap: {x: 15, y: 30}

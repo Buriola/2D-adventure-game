@@ -6,7 +6,7 @@ namespace Buriola.Gameplay.Player.Data
     public class PlayerData : ScriptableObject
     {
         [Header("Movement")]
-        public LayerMask CollisionMask;
+        public LayerMask GroundCollisionMask;
         public float GroundCheckRadius = 1f;
         public float MoveSpeed = 4f; 
         public float AccelerationTimeGrounded = 0.1f;
@@ -22,10 +22,12 @@ namespace Buriola.Gameplay.Player.Data
         public float JumpCooldown = 0.5f;
         
         [Header("Wall Slide")]
-        public float _wallSlideMaxSpeed = 3f;
-        public float _wallStickTime = 0.25f;
-        public Vector2 _wallJumpClimb = Vector2.zero;
-        public Vector2 _wallJumpOff = Vector2.zero;
-        public Vector2 _wallJumpLeap = Vector2.zero;
+        public LayerMask WallCollisionMask;
+        public float WallDistanceCheck = 0.5f;
+        public float WallSlideMaxSpeed = 3f;
+        public float WallStickTime = 0.25f;
+        public Vector2 WallJumpClimb = Vector2.zero;
+        public Vector2 WallJumpOff = Vector2.zero;
+        public Vector2 WallJumpLeap = Vector2.zero;
     }
 }

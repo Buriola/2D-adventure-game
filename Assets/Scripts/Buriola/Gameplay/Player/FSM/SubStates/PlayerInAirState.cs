@@ -8,8 +8,8 @@ namespace Buriola.Gameplay.Player.FSM.SubStates
     public sealed class PlayerInAirState : PlayerState
     {
         private bool _isGrounded;
+        private bool _isTouchingWall;
         private float _rawInputX;
-        private bool _jumpInput;
         private float _velocityXSmoothing;
         private bool _animationSet;
         
@@ -34,7 +34,6 @@ namespace Buriola.Gameplay.Player.FSM.SubStates
             base.OnUpdate();
 
             _rawInputX = PlayerController.InputHandler.RawInputX;
-            _jumpInput = PlayerController.InputHandler.JumpInput;
             
             float targetVelocityX = _rawInputX * PlayerData.MoveSpeed;
             float xMovement = Mathf.SmoothDamp(PlayerController.CurrentVelocity.x, targetVelocityX, ref _velocityXSmoothing, PlayerData.AccelerationTimeAirborne);
@@ -61,10 +60,16 @@ namespace Buriola.Gameplay.Player.FSM.SubStates
             base.DoChecks();
 
             _isGrounded = PlayerController.IsGrounded();
+            _isTouchingWall = PlayerController.IsTouchingWall();
             
             if (_isGrounded && PlayerController.CurrentVelocity.y < 0.01f)
             {
                 StateMachine.ChangeState(PlayerController.LandState);
+            }
+            
+            if (_isTouchingWall && PlayerController.CurrentVelocity.y < 0f && _rawInputX == PlayerController.DirectionX)
+            {
+                StateMachine.ChangeState(PlayerController.WallSlideState);
             }
         }
         

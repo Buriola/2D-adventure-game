@@ -1,5 +1,4 @@
-﻿using System;
-using Buriola._2D_Physics;
+﻿using Buriola._2D_Physics;
 using Buriola.Gameplay.Animations;
 using Buriola.Gameplay.Player.Data;
 using Buriola.Gameplay.Player.FSM;
@@ -29,8 +28,10 @@ namespace Buriola.Gameplay.Player
         public PlayerJumpState JumpState { get; private set; }
         public PlayerInAirState InAirState { get; private set; }
         public PlayerLandState LandState { get; private set; }
+        public PlayerWallSlideState WallSlideState { get; private set; }
         
         public int DirectionX { get; private set; }
+        public int WallDirectionX { get; private set; }
         private Vector2 _velocity;
         
         public bool CanJump { get; private set; }
@@ -44,6 +45,7 @@ namespace Buriola.Gameplay.Player
             JumpState = new PlayerJumpState(this, StateMachine, _playerData, AnimationConstants.PLAYER_JUMP_HASH);
             InAirState = new PlayerInAirState(this, StateMachine, _playerData, AnimationConstants.PLAYER_AIR_HASH);
             LandState = new PlayerLandState(this, StateMachine, _playerData, AnimationConstants.PLAYER_LAND_HASH);
+            WallSlideState = new PlayerWallSlideState(this, StateMachine, _playerData, AnimationConstants.PLAYER_WALL_SLIDING_HASH);
         }
 
         private void Start()
@@ -77,6 +79,7 @@ namespace Buriola.Gameplay.Player
             JumpState.Dispose();
             InAirState.Dispose();
             LandState.Dispose();
+            WallSlideState.Dispose();
         }
 
         private void OnDrawGizmos()
@@ -113,7 +116,19 @@ namespace Buriola.Gameplay.Player
         
         public bool IsGrounded()
         {
-            return Physics2D.OverlapCircle(_groundCheckPoint + (Vector2)transform.position, _playerData.GroundCheckRadius, _playerData.CollisionMask);;
+            return Physics2D.OverlapCircle(_groundCheckPoint + (Vector2)transform.position, _playerData.GroundCheckRadius, _playerData.GroundCollisionMask);;
+        }
+
+        public bool IsTouchingWall()
+        {
+            if (Physics2D.Raycast(transform.position, Vector2.right * DirectionX, _playerData.WallDistanceCheck,
+                _playerData.WallCollisionMask))
+            {
+                WallDirectionX = (int)(Vector2.right * DirectionX).x;
+                return true;
+            }
+
+            return false;
         }
         
         public void SetVelocity(Vector2 velocity)
