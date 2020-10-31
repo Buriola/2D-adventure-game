@@ -24,6 +24,8 @@ MonoBehaviour:
   MaxJumpHeight: 2
   MinJumpHeight: 1
   TimeToJumpApex: 0.2
+  JumpAmount: 1
+  JumpCooldown: 0.2
   _wallSlideMaxSpeed: 3
   _wallStickTime: 0.25
   _wallJumpClimb: {x: 0, y: 0}

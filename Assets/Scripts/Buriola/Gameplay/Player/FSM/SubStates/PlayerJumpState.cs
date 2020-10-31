@@ -12,17 +12,21 @@ namespace Buriola.Gameplay.Player.FSM.SubStates
         private float _time;
         private float _yPosition;
         private float _finalYPosition;
+        private int _amountOfJumpsLeft;
         
         public PlayerJumpState(PlayerController2D player, PlayerStateMachine stateMachine, PlayerData data, int animationHash) : base(player, stateMachine, data, animationHash)
         {
             _gravity = -(2 * PlayerData.MaxJumpHeight) / Mathf.Pow(PlayerData.TimeToJumpApex, 2);
             Physics2D.gravity = new Vector2(0f, _gravity);
+            _amountOfJumpsLeft = PlayerData.JumpAmount;
         }
         
         public override void OnEnter()
         {
             base.OnEnter();
 
+            PlayerController.SetCanJump(false);
+            
             _time = 0f;
             _maxJumpVelocity = Mathf.Abs(_gravity) * PlayerData.TimeToJumpApex;
             _minJumpVelocity = Mathf.Sqrt(2 * Mathf.Abs(_gravity) * PlayerData.MinJumpHeight);
@@ -52,6 +56,21 @@ namespace Buriola.Gameplay.Player.FSM.SubStates
                     IsAbilityDone = true;
                 }
             }
+        }
+
+        public bool CanJumpAgain()
+        {
+            bool canJumpAgain = _amountOfJumpsLeft > 0;
+            
+            _amountOfJumpsLeft--;
+            if (_amountOfJumpsLeft <= 0) _amountOfJumpsLeft = 0;
+            
+            return canJumpAgain;
+        }
+
+        public void ResetJumps()
+        {
+            _amountOfJumpsLeft = PlayerData.JumpAmount;
         }
     }
 }

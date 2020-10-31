@@ -35,7 +35,7 @@ namespace Buriola.Gameplay.Player.FSM.SuperStates
             }
         }
 
-        public override void DoChecks()
+        protected override void DoChecks()
         {
             base.DoChecks();
 

@@ -18,6 +18,8 @@ namespace Buriola.Gameplay.Player.Data
         public float MaxJumpHeight = 8f;
         public float MinJumpHeight = 1f;
         public float TimeToJumpApex = 0.4f;
+        public int JumpAmount = 1;
+        public float JumpCooldown = 0.5f;
         
         [Header("Wall Slide")]
         public float _wallSlideMaxSpeed = 3f;

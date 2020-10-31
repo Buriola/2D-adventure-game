@@ -1,5 +1,7 @@
 ﻿using Buriola.Gameplay.Player.Data;
+using Buriola.InputSystem;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace Buriola.Gameplay.Player.FSM.SubStates
 {
@@ -7,6 +9,7 @@ namespace Buriola.Gameplay.Player.FSM.SubStates
     {
         private bool _isGrounded;
         private float _rawInputX;
+        private bool _jumpInput;
         private float _velocityXSmoothing;
         private bool _animationSet;
         
@@ -18,6 +21,9 @@ namespace Buriola.Gameplay.Player.FSM.SubStates
         {
             DoChecks();
             
+            InputController.Instance.GameInputContext.OnActionButton0Pressed -= OnJumpPressed;
+            InputController.Instance.GameInputContext.OnActionButton0Pressed += OnJumpPressed;
+            
             StartTime = Time.time;
             IsAnimationFinished = false;
             _animationSet = false;
@@ -28,6 +34,7 @@ namespace Buriola.Gameplay.Player.FSM.SubStates
             base.OnUpdate();
 
             _rawInputX = PlayerController.InputHandler.RawInputX;
+            _jumpInput = PlayerController.InputHandler.JumpInput;
             
             float targetVelocityX = _rawInputX * PlayerData.MoveSpeed;
             float xMovement = Mathf.SmoothDamp(PlayerController.CurrentVelocity.x, targetVelocityX, ref _velocityXSmoothing, PlayerData.AccelerationTimeAirborne);
@@ -42,7 +49,14 @@ namespace Buriola.Gameplay.Player.FSM.SubStates
             }
         }
 
-        public override void DoChecks()
+        public override void OnExit()
+        {
+            base.OnExit();
+            
+            InputController.Instance.GameInputContext.OnActionButton0Pressed -= OnJumpPressed;
+        }
+
+        protected override void DoChecks()
         {
             base.DoChecks();
 
@@ -51,6 +65,22 @@ namespace Buriola.Gameplay.Player.FSM.SubStates
             if (_isGrounded && PlayerController.CurrentVelocity.y < 0.01f)
             {
                 StateMachine.ChangeState(PlayerController.LandState);
+            }
+        }
+        
+        public override void Dispose()
+        {
+            InputController.Instance.GameInputContext.OnActionButton0Pressed -= OnJumpPressed;
+        }
+
+        private void OnJumpPressed(InputAction.CallbackContext obj)
+        {
+            if (obj.ReadValueAsButton())
+            {
+                if (PlayerController.JumpState.CanJumpAgain())
+                {
+                    StateMachine.ChangeState(PlayerController.JumpState);
+                }
             }
         }
     }

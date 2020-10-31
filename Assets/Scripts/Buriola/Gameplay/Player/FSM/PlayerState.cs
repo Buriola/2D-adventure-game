@@ -1,9 +1,10 @@
-﻿using Buriola.Gameplay.Player.Data;
+﻿using System;
+using Buriola.Gameplay.Player.Data;
 using UnityEngine;
 
 namespace Buriola.Gameplay.Player.FSM
 {
-    public class PlayerState
+    public class PlayerState : IDisposable
     {
         protected PlayerController2D PlayerController;
         protected PlayerStateMachine StateMachine;
@@ -45,7 +46,13 @@ namespace Buriola.Gameplay.Player.FSM
             PlayerController.AnimController.StopAnimation();
         }
 
-        public virtual void DoChecks() { }
+        protected virtual void DoChecks() { }
+
+        public virtual void Dispose()
+        {
+            
+        }
+        
         public virtual void AnimationTrigger() { }
         public virtual void AnimationFinishTrigger() => IsAnimationFinished = true;
     }

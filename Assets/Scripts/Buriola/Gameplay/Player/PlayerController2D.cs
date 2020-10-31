@@ -1,4 +1,5 @@
-﻿using Buriola._2D_Physics;
+﻿using System;
+using Buriola._2D_Physics;
 using Buriola.Gameplay.Animations;
 using Buriola.Gameplay.Player.Data;
 using Buriola.Gameplay.Player.FSM;
@@ -30,14 +31,10 @@ namespace Buriola.Gameplay.Player
         public PlayerLandState LandState { get; private set; }
         
         public int DirectionX { get; private set; }
-
         private Vector2 _velocity;
         
-        private float _timeToWallUnstick;
-        private float _slopeAngle;
-        
-        private bool _isWallSliding;
-        private int _wallDirectionX;
+        public bool CanJump { get; private set; }
+        private float _jumpTimer;
 
         private void Awake()
         {
@@ -55,6 +52,7 @@ namespace Buriola.Gameplay.Player
             AnimController = GetComponent<AnimationController>();
             InputHandler = GetComponent<PlayerInputHandler>();
             DirectionX = 1;
+            CanJump = true;
 
             StateMachine.Initialize(IdleState);
         }
@@ -63,11 +61,22 @@ namespace Buriola.Gameplay.Player
         {
             CurrentVelocity = Rb2d.velocity;
             StateMachine.CurrentState.OnUpdate();
+            
+            CheckIfCanJump();
         }
 
         private void FixedUpdate()
         {
             StateMachine.CurrentState.OnPhysicsUpdate();
+        }
+
+        private void OnDisable()
+        {
+            IdleState.Dispose();
+            MoveState.Dispose();
+            JumpState.Dispose();
+            InAirState.Dispose();
+            LandState.Dispose();
         }
 
         private void OnDrawGizmos()
@@ -84,6 +93,19 @@ namespace Buriola.Gameplay.Player
         {
             DirectionX *= -1;
             transform.Rotate(0f, 180f, 0f);
+        }
+
+        private void CheckIfCanJump()
+        {
+            if (!CanJump)
+            {
+                _jumpTimer += Time.deltaTime;
+                if (_jumpTimer >= _playerData.JumpCooldown)
+                {
+                    _jumpTimer = 0f;
+                    CanJump = true;
+                }
+            }
         }
         
         private void AnimationTrigger() => StateMachine.CurrentState.AnimationTrigger();
@@ -121,6 +143,11 @@ namespace Buriola.Gameplay.Player
             {
                 Flip();
             }
+        }
+
+        public void SetCanJump(bool canJump)
+        {
+            CanJump = canJump;
         }
     }
 }

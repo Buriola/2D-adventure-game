@@ -8,7 +8,7 @@ namespace Buriola.Gameplay.Animations
         private const string PLAYER_MOVING = "Run1";
         private const string PLAYER_JUMP = "Jump";
         private const string PLAYER_IN_AIR = "InAir";
-        private const string PLAYER_LAND = "land";
+        private const string PLAYER_LAND = "Land";
         
         public static readonly int PLAYER_IDLE_HASH = Animator.StringToHash(PLAYER_IDLE);
         public static readonly int PLAYER_MOVING_HASH = Animator.StringToHash(PLAYER_MOVING);

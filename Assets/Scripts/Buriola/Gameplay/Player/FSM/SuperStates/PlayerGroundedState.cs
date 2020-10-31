@@ -15,6 +15,13 @@ namespace Buriola.Gameplay.Player.FSM.SuperStates
             
         }
 
+        public override void OnEnter()
+        {
+            base.OnEnter();
+            
+            PlayerController.JumpState.ResetJumps();
+        }
+
         public override void OnUpdate()
         {
             base.OnUpdate();
@@ -23,7 +30,7 @@ namespace Buriola.Gameplay.Player.FSM.SuperStates
             RawInputX = PlayerController.InputHandler.RawInputX;
             JumpInput = PlayerController.InputHandler.JumpInput;
 
-            if (JumpInput)
+            if (JumpInput && PlayerController.CanJump)
             {
                 StateMachine.ChangeState(PlayerController.JumpState);
             }
@@ -34,7 +41,7 @@ namespace Buriola.Gameplay.Player.FSM.SuperStates
             }
         }
 
-        public override void DoChecks()
+        protected override void DoChecks()
         {
             base.DoChecks();
 
