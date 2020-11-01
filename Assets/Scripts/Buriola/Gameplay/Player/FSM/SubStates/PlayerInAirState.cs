@@ -9,6 +9,7 @@ namespace Buriola.Gameplay.Player.FSM.SubStates
     {
         private bool _isGrounded;
         private bool _isTouchingWall;
+        private bool _isTouchingLedge;
         private float _rawInputX;
         private float _velocityXSmoothing;
         private bool _animationSet;
@@ -61,6 +62,7 @@ namespace Buriola.Gameplay.Player.FSM.SubStates
 
             _isGrounded = PlayerController.IsGrounded();
             _isTouchingWall = PlayerController.IsTouchingWall();
+            _isTouchingLedge = PlayerController.CheckForLedges();
             
             if (_isGrounded && PlayerController.CurrentVelocity.y < 0.01f)
             {
@@ -70,6 +72,12 @@ namespace Buriola.Gameplay.Player.FSM.SubStates
             if (_isTouchingWall && PlayerController.CurrentVelocity.y < 0f && _rawInputX == PlayerController.DirectionX)
             {
                 StateMachine.ChangeState(PlayerController.WallSlideState);
+            }
+
+            if (_isTouchingWall && !_isTouchingLedge)
+            {
+                PlayerController.LedgeClimbState.SetDetectedPosition(PlayerController.transform.position);
+                StateMachine.ChangeState(PlayerController.LedgeClimbState);
             }
         }
         

@@ -35,3 +35,6 @@ MonoBehaviour:
   WallJumpClimb: {x: 10, y: 30}
   WallJumpOff: {x: 10, y: 0}
   WallJumpLeap: {x: 15, y: 30}
+  LedgeDistanceCheck: 0.5
+  StartOffset: {x: 0.5, y: 0.85}
+  EndOffset: {x: 0.5, y: 0.75}

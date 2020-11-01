@@ -14,6 +14,7 @@ namespace Buriola.Gameplay.Player
     {
         [SerializeField] private PlayerData _playerData = null;
         [SerializeField] private Vector2 _groundCheckPoint = Vector2.zero;
+        [SerializeField] private Vector2 _ledgeCheckPoint = Vector2.zero;
 
         public Rigidbody2D Rb2d { get; private set; }
         public Vector2 CurrentVelocity { get; private set; }
@@ -26,12 +27,15 @@ namespace Buriola.Gameplay.Player
         public PlayerInAirState InAirState { get; private set; }
         public PlayerLandState LandState { get; private set; }
         public PlayerWallSlideState WallSlideState { get; private set; }
+        public PlayerLedgeClimbState LedgeClimbState { get; private set; }
         
         public int DirectionX { get; private set; }
         public int WallDirectionX { get; private set; }
         private Vector2 _velocity;
         
         public bool CanJump { get; private set; }
+
+        private bool _gravityEnabled;
         private float _jumpTimer;
         private float _gravity;
         private Vector2 _gravityForce;
@@ -45,6 +49,7 @@ namespace Buriola.Gameplay.Player
             InAirState = new PlayerInAirState(this, StateMachine, _playerData, AnimationConstants.PLAYER_AIR_HASH);
             LandState = new PlayerLandState(this, StateMachine, _playerData, AnimationConstants.PLAYER_LAND_HASH);
             WallSlideState = new PlayerWallSlideState(this, StateMachine, _playerData, AnimationConstants.PLAYER_WALL_SLIDING_HASH);
+            LedgeClimbState = new PlayerLedgeClimbState(this, StateMachine, _playerData, AnimationConstants.PLAYER_LEDGE_GRAB_HASH);
         }
 
         private void Start()
@@ -54,6 +59,7 @@ namespace Buriola.Gameplay.Player
             InputHandler = GetComponent<PlayerInputHandler>();
             DirectionX = 1;
             CanJump = true;
+            _gravityEnabled = true;
 
             _gravity = -(2 * _playerData.MaxJumpHeight) / Mathf.Pow(_playerData.TimeToJumpApex, 2);
             _gravityForce.Set(0f, _gravity);
@@ -73,7 +79,7 @@ namespace Buriola.Gameplay.Player
         {
             StateMachine.CurrentState.OnPhysicsUpdate();
 
-            if (!Rb2d.IsSleeping())
+            if (!Rb2d.IsSleeping() && _gravityEnabled)
             {
                 Rb2d.AddForce(_gravityForce, ForceMode2D.Force);   
             }
@@ -87,6 +93,7 @@ namespace Buriola.Gameplay.Player
             InAirState.Dispose();
             LandState.Dispose();
             WallSlideState.Dispose();
+            LedgeClimbState.Dispose();
         }
 
         private void OnDrawGizmos()
@@ -96,6 +103,8 @@ namespace Buriola.Gameplay.Player
                 Gizmos.color = Color.yellow;
                 Vector2 globalWaypointPos = _groundCheckPoint + (Vector2)transform.position;
                 Gizmos.DrawWireSphere(globalWaypointPos, _playerData.GroundCheckRadius);
+                Gizmos.DrawRay(transform.position, Vector2.right * _playerData.WallDistanceCheck); 
+                Gizmos.DrawRay((Vector2)transform.position + _ledgeCheckPoint, Vector2.right * _playerData.LedgeDistanceCheck); 
             }
         }
         
@@ -137,6 +146,41 @@ namespace Buriola.Gameplay.Player
 
             return false;
         }
+
+        public bool CheckForLedges()
+        {
+            return Physics2D.Raycast((Vector2) transform.position + _ledgeCheckPoint, Vector2.right * DirectionX,
+                _playerData.LedgeDistanceCheck, _playerData.GroundCollisionMask);
+        }
+
+        public Vector2 FindCornerPosition()
+        {
+            float xDistance = 0f;
+            float yDistance = 0f;
+
+            Vector2 globalLedgeCheckPos = (Vector2) transform.position + _ledgeCheckPoint; 
+            
+            RaycastHit2D xHit = Physics2D.Raycast(transform.position, Vector2.right * DirectionX,
+                _playerData.WallDistanceCheck, _playerData.GroundCollisionMask);
+            
+            if (xHit)
+            {
+                xDistance = xHit.distance;
+                _velocity.Set(xDistance * DirectionX, 0f);
+            }
+
+            RaycastHit2D yHit = Physics2D.Raycast(globalLedgeCheckPos + _velocity, Vector2.down,
+                _playerData.LedgeDistanceCheck, _playerData.GroundCollisionMask);
+
+            if (yHit)
+            {
+                yDistance = yHit.distance;
+            }
+            
+            _velocity.Set(transform.position.x + (xDistance * DirectionX), globalLedgeCheckPos.y - yDistance);
+            
+            return _velocity;
+        }
         
         public void SetVelocity(Vector2 velocity)
         {
@@ -170,6 +214,11 @@ namespace Buriola.Gameplay.Player
         public void SetCanJump(bool canJump)
         {
             CanJump = canJump;
+        }
+
+        public void ToggleGravity()
+        {
+            _gravityEnabled = !_gravityEnabled;
         }
     }
 }
