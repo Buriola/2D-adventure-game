@@ -12,6 +12,7 @@ namespace Buriola.Gameplay.Player
         public float RawInputX { get; private set; }
         public float RawInputY { get; private set; }
         public bool JumpInput { get; private set; }
+        public bool AttackInput { get; private set; }
 
         private void OnEnable()
         {
@@ -19,6 +20,8 @@ namespace Buriola.Gameplay.Player
             InputController.Instance.GameInputContext.OnMovementEnded += OnMovementEnded;
             InputController.Instance.GameInputContext.OnActionButton0Pressed += OnJumpPressed;
             InputController.Instance.GameInputContext.OnActionButton0Released += OnJumpEnded;
+            InputController.Instance.GameInputContext.OnActionButton2Pressed += OnAttackPressed;
+            InputController.Instance.GameInputContext.OnActionButton2Released += OnAttackReleased;
         }
 
         private void OnDisable()
@@ -27,6 +30,8 @@ namespace Buriola.Gameplay.Player
             InputController.Instance.GameInputContext.OnMovementEnded -= OnMovementEnded;
             InputController.Instance.GameInputContext.OnActionButton0Pressed -= OnJumpPressed;
             InputController.Instance.GameInputContext.OnActionButton0Released -= OnJumpEnded;
+            InputController.Instance.GameInputContext.OnActionButton2Pressed -= OnAttackPressed;
+            InputController.Instance.GameInputContext.OnActionButton2Released -= OnAttackReleased;
         }
         
         private void OnMovementStart(CallbackContext obj)
@@ -52,6 +57,16 @@ namespace Buriola.Gameplay.Player
         private void OnJumpEnded(CallbackContext obj)
         {
             JumpInput = false;
+        }
+
+        private void OnAttackPressed(CallbackContext obj)
+        {
+            AttackInput = true;
+        }
+
+        private void OnAttackReleased(CallbackContext obj)
+        {
+            AttackInput = false;
         }
     }
 }

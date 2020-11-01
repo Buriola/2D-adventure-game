@@ -42,6 +42,7 @@ namespace Buriola.Gameplay.Player
         public PlayerLedgeJumpState LedgeJumpState { get; private set; }
         public PlayerCrouchIdleState CrouchIdleState { get; private set; }
         public PlayerCrouchMoveState CrouchMoveState { get; private set; }
+        public PlayerAttackState AttackState { get; private set; }
         #endregion
 
         private void Awake()
@@ -57,6 +58,7 @@ namespace Buriola.Gameplay.Player
             LedgeJumpState = new PlayerLedgeJumpState(this, StateMachine, _playerData, AnimationConstants.PLAYER_LEDGE_JUMP_HASH);
             CrouchIdleState = new PlayerCrouchIdleState(this, StateMachine, _playerData, AnimationConstants.PLAYER_CROUCH_IDLE_HASH);
             CrouchMoveState = new PlayerCrouchMoveState(this, StateMachine, _playerData, AnimationConstants.PLAYER_CROUCH_WALK_HASH);
+            AttackState = new PlayerAttackState(this, StateMachine, _playerData, AnimationConstants.PLAYER_ATTACK_1_HASH);
         }
 
         private void Start()
@@ -147,7 +149,7 @@ namespace Buriola.Gameplay.Player
         public bool CheckForLedges()
         {
             return Physics2D.Raycast((Vector2) transform.position + _ledgeCheckPoint, 
-                Vector2.right * DirectionX, _playerData.LedgeDistanceCheck, _playerData.WallCollisionMask);
+                Vector2.right * DirectionX, _playerData.LedgeDistanceCheck, _playerData.LedgeCollisionMask);
         }
 
         public bool CheckForObstaclesAbovePlayer()

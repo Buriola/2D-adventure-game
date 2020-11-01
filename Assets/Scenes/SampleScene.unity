@@ -135,11 +135,11 @@ GameObject:
   - component: {fileID: 179772035}
   m_Layer: 9
   m_Name: Ground (1)
-  m_TagString: Untagged
+  m_TagString: Obstacle
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!61 &179772035
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -221,7 +221,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 179772034}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.226, y: 0.176, z: 0.31835938}
+  m_LocalPosition: {x: 1.21, y: 0.25, z: 0.31835938}
   m_LocalScale: {x: 3.5044355, y: 0.5707296, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -349,7 +349,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!61 &699450344
 BoxCollider2D:
   m_ObjectHideFlags: 0

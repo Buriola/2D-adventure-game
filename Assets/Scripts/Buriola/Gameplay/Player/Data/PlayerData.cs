@@ -38,6 +38,7 @@ namespace Buriola.Gameplay.Player.Data
         public Vector2 WallJumpLeap = Vector2.zero;
 
         [Header("Ledge Movement")] 
+        public LayerMask LedgeCollisionMask;
         public float LedgeDistanceCheck = 0.5f;
         public Vector2 LedgeJumpClimb = Vector2.zero;
         public Vector2 StartOffset = Vector2.zero;

@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Through
   - Climbable
+  - Obstacle
   layers:
   - Default
   - TransparentFX

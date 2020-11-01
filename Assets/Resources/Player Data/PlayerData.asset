@@ -40,6 +40,9 @@ MonoBehaviour:
   WallJumpClimb: {x: 12, y: 23}
   WallJumpOff: {x: 10, y: 0}
   WallJumpLeap: {x: 12, y: 25}
+  LedgeCollisionMask:
+    serializedVersion: 2
+    m_Bits: 1536
   LedgeDistanceCheck: 0.5
   LedgeJumpClimb: {x: 4, y: 16}
   StartOffset: {x: 0.5, y: 0.85}

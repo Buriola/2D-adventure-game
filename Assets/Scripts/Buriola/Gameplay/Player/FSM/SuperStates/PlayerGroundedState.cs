@@ -28,6 +28,8 @@ namespace Buriola.Gameplay.Player.FSM.SuperStates
             
             InputController.Instance.GameInputContext.OnActionButton0Pressed -= OnJumpPressed;
             InputController.Instance.GameInputContext.OnActionButton0Pressed += OnJumpPressed;
+            InputController.Instance.GameInputContext.OnActionButton2Pressed -= OnAttackPressed;
+            InputController.Instance.GameInputContext.OnActionButton2Pressed += OnAttackPressed;
             
             PlayerController.JumpState.ResetJumps();
         }
@@ -56,11 +58,13 @@ namespace Buriola.Gameplay.Player.FSM.SuperStates
         {
             base.OnExit();
             
+            InputController.Instance.GameInputContext.OnActionButton2Pressed -= OnAttackPressed;
             InputController.Instance.GameInputContext.OnActionButton0Pressed -= OnJumpPressed;
         }
 
         public override void Dispose()
         {
+            InputController.Instance.GameInputContext.OnActionButton2Pressed -= OnAttackPressed;
             InputController.Instance.GameInputContext.OnActionButton0Pressed -= OnJumpPressed;
         }
 
@@ -77,6 +81,14 @@ namespace Buriola.Gameplay.Player.FSM.SuperStates
             if (context.ReadValueAsButton() && !ObstacleAbove)
             {
                 StateMachine.ChangeState(PlayerController.JumpState);
+            }
+        }
+
+        private void OnAttackPressed(InputAction.CallbackContext context)
+        {
+            if (context.ReadValueAsButton() && !ObstacleAbove)
+            {
+                StateMachine.ChangeState(PlayerController.AttackState);
             }
         }
     }

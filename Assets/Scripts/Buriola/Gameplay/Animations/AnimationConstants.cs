@@ -15,6 +15,9 @@ namespace Buriola.Gameplay.Animations
         private const string PLAYER_LEDGE_JUMP = "LedgeJump";
         private const string PLAYER_CROUCH_IDLE = "CrouchIdle1";
         private const string PLAYER_CROUCH_WALK = "CrouchWalk";
+        private const string PLAYER_ATTACK_1 = "Attack1";
+        private const string PLAYER_ATTACK_2 = "Attack2";
+        private const string PLAYER_ATTACK_3 = "Attack3";
         
         public static readonly int PLAYER_IDLE_HASH = Animator.StringToHash(PLAYER_IDLE);
         public static readonly int PLAYER_MOVING_HASH = Animator.StringToHash(PLAYER_MOVING);
@@ -27,5 +30,8 @@ namespace Buriola.Gameplay.Animations
         public static readonly int PLAYER_LEDGE_JUMP_HASH = Animator.StringToHash(PLAYER_LEDGE_JUMP);
         public static readonly int PLAYER_CROUCH_IDLE_HASH = Animator.StringToHash(PLAYER_CROUCH_IDLE);
         public static readonly int PLAYER_CROUCH_WALK_HASH = Animator.StringToHash(PLAYER_CROUCH_WALK);
+        public static readonly int PLAYER_ATTACK_1_HASH = Animator.StringToHash(PLAYER_ATTACK_1);
+        public static readonly int PLAYER_ATTACK_2_HASH = Animator.StringToHash(PLAYER_ATTACK_2);
+        public static readonly int PLAYER_ATTACK_3_HASH = Animator.StringToHash(PLAYER_ATTACK_3);
     }
 }
