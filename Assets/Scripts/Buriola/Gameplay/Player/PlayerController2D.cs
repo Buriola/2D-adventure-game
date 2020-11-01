@@ -16,12 +16,22 @@ namespace Buriola.Gameplay.Player
         [SerializeField] private Vector2 _groundCheckPoint = Vector2.zero;
         [SerializeField] private Vector2 _ledgeCheckPoint = Vector2.zero;
 
+        private Vector2 _velocity;
+        private Vector2 _gravityForce;
+        
+        private bool _gravityEnabled;
+        
         public float Gravity { get; private set; }
         public Rigidbody2D Rb2d { get; private set; }
-        public Vector2 CurrentVelocity { get; private set; }
-        public PlayerStateMachine StateMachine { get; private set; }
+        public CapsuleCollider2D Collider { get; private set; }
         public AnimationController AnimController { get; private set; }
         public PlayerInputHandler InputHandler { get; private set; }
+        public Vector2 CurrentVelocity { get; private set; }
+        public int DirectionX { get; private set; }
+        public int WallDirectionX { get; private set; }
+
+        #region State Machine
+        public PlayerStateMachine StateMachine { get; private set; }
         public PlayerIdleState IdleState { get; private set; }
         public PlayerMoveState MoveState { get; private set; }
         public PlayerJumpState JumpState { get; private set; }
@@ -30,15 +40,9 @@ namespace Buriola.Gameplay.Player
         public PlayerWallSlideState WallSlideState { get; private set; }
         public PlayerLedgeClimbState LedgeClimbState { get; private set; }
         public PlayerLedgeJumpState LedgeJumpState { get; private set; }
-        
-        public int DirectionX { get; private set; }
-        public int WallDirectionX { get; private set; }
-        private Vector2 _velocity;
-
-        private bool _gravityEnabled;
-        private float _jumpTimer;
-        
-        private Vector2 _gravityForce;
+        public PlayerCrouchIdleState CrouchIdleState { get; private set; }
+        public PlayerCrouchMoveState CrouchMoveState { get; private set; }
+        #endregion
 
         private void Awake()
         {
@@ -51,11 +55,14 @@ namespace Buriola.Gameplay.Player
             WallSlideState = new PlayerWallSlideState(this, StateMachine, _playerData, AnimationConstants.PLAYER_WALL_SLIDING_HASH);
             LedgeClimbState = new PlayerLedgeClimbState(this, StateMachine, _playerData, AnimationConstants.PLAYER_LEDGE_GRAB_HASH);
             LedgeJumpState = new PlayerLedgeJumpState(this, StateMachine, _playerData, AnimationConstants.PLAYER_LEDGE_JUMP_HASH);
+            CrouchIdleState = new PlayerCrouchIdleState(this, StateMachine, _playerData, AnimationConstants.PLAYER_CROUCH_IDLE_HASH);
+            CrouchMoveState = new PlayerCrouchMoveState(this, StateMachine, _playerData, AnimationConstants.PLAYER_CROUCH_WALK_HASH);
         }
 
         private void Start()
         {
             Rb2d = GetComponent<Rigidbody2D>();
+            Collider = GetComponent<CapsuleCollider2D>();
             AnimController = GetComponent<AnimationController>();
             InputHandler = GetComponent<PlayerInputHandler>();
             DirectionX = 1;
@@ -92,6 +99,8 @@ namespace Buriola.Gameplay.Player
             LandState.Dispose();
             WallSlideState.Dispose();
             LedgeClimbState.Dispose();
+            CrouchIdleState.Dispose();
+            CrouchMoveState.Dispose();
         }
 
         private void OnDrawGizmos()
@@ -103,6 +112,9 @@ namespace Buriola.Gameplay.Player
                 Gizmos.DrawWireSphere(globalWaypointPos, _playerData.GroundCheckRadius);
                 Gizmos.DrawRay(transform.position, Vector2.right * _playerData.WallDistanceCheck); 
                 Gizmos.DrawRay((Vector2)transform.position + _ledgeCheckPoint, Vector2.right * _playerData.LedgeDistanceCheck); 
+                
+                Gizmos.color = Color.green;
+                Gizmos.DrawRay((Vector2) (transform.position) - (Vector2.up), Vector2.up * 1f);
             }
         }
         
@@ -134,8 +146,13 @@ namespace Buriola.Gameplay.Player
 
         public bool CheckForLedges()
         {
-            return Physics2D.Raycast((Vector2) transform.position + _ledgeCheckPoint, Vector2.right * DirectionX,
-                _playerData.LedgeDistanceCheck, _playerData.GroundCollisionMask);
+            return Physics2D.Raycast((Vector2) transform.position + _ledgeCheckPoint, 
+                Vector2.right * DirectionX, _playerData.LedgeDistanceCheck, _playerData.WallCollisionMask);
+        }
+
+        public bool CheckForObstaclesAbovePlayer()
+        {
+            return Physics2D.Raycast(transform.position, Vector2.up, _playerData.CollisionAboveCheckDistance, _playerData.GroundCollisionMask);
         }
 
         public Vector2 FindCornerPosition()

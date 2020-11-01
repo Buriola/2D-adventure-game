@@ -7,10 +7,12 @@ namespace Buriola.Gameplay.Player.FSM.SuperStates
 {
     public class PlayerGroundedState : PlayerState
     {
+        private bool _isGrounded;
+        
         protected Vector2 Input;
         protected float RawInputX;
-        private bool IsGrounded;
-        private bool JumpInput;
+        protected float RawInputY;
+        protected bool ObstacleAbove;
         
         protected PlayerGroundedState(PlayerController2D player, PlayerStateMachine stateMachine, PlayerData data, int animationHash) : base(player, stateMachine, data, animationHash)
         {
@@ -21,6 +23,9 @@ namespace Buriola.Gameplay.Player.FSM.SuperStates
         {
             base.OnEnter();
 
+            PlayerController.Collider.size = PlayerData.NormalColliderSize;
+            PlayerController.Collider.offset = PlayerData.NormalColliderOffset;
+            
             InputController.Instance.GameInputContext.OnActionButton0Pressed -= OnJumpPressed;
             InputController.Instance.GameInputContext.OnActionButton0Pressed += OnJumpPressed;
             
@@ -33,11 +38,17 @@ namespace Buriola.Gameplay.Player.FSM.SuperStates
             
             Input = PlayerController.InputHandler.MovementAxis;
             RawInputX = PlayerController.InputHandler.RawInputX;
-            JumpInput = PlayerController.InputHandler.JumpInput;
+            RawInputY = PlayerController.InputHandler.RawInputY;
 
-            if (!IsGrounded)
+            if (!_isGrounded)
             {
                 StateMachine.ChangeState(PlayerController.InAirState);
+                return;
+            }
+
+            if (ObstacleAbove || RawInputY < 0f)
+            {
+                StateMachine.ChangeState(PlayerController.CrouchIdleState);
             }
         }
 
@@ -57,12 +68,13 @@ namespace Buriola.Gameplay.Player.FSM.SuperStates
         {
             base.DoChecks();
 
-            IsGrounded = PlayerController.IsGrounded();
+            _isGrounded = PlayerController.IsGrounded();
+            ObstacleAbove = PlayerController.CheckForObstaclesAbovePlayer();
         }
 
         private void OnJumpPressed(InputAction.CallbackContext context)
         {
-            if (context.ReadValueAsButton())
+            if (context.ReadValueAsButton() && !ObstacleAbove)
             {
                 StateMachine.ChangeState(PlayerController.JumpState);
             }

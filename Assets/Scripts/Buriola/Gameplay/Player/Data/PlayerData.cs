@@ -8,10 +8,18 @@ namespace Buriola.Gameplay.Player.Data
         [Header("Movement")]
         public LayerMask GroundCollisionMask;
         public float GroundCheckRadius = 1f;
-        public float MoveSpeed = 4f; 
+        public float MoveSpeed = 4f;
+        public float CrouchedMoveSpeed = 8f;
         public float AccelerationTimeGrounded = 0.1f;
         public float MaxClimbAngle = 80f;
         public float MaxDescendAngle = 75f;
+
+        [Header("Collider Settings")] 
+        public float CollisionAboveCheckDistance = 0.8f;
+        public Vector2 NormalColliderSize = Vector2.zero;
+        public Vector2 NormalColliderOffset = Vector2.zero;
+        public Vector2 CrouchedColliderSize = Vector2.zero;
+        public Vector2 CrouchedColliderOffset = Vector2.zero;
         
         [Header("Air & Jump")]
         public float AccelerationTimeAirborne = 0.2f;
@@ -33,6 +41,5 @@ namespace Buriola.Gameplay.Player.Data
         public float LedgeDistanceCheck = 0.5f;
         public Vector2 LedgeJumpClimb = Vector2.zero;
         public Vector2 StartOffset = Vector2.zero;
-        public Vector2 EndOffset = Vector2.zero;
     }
 }

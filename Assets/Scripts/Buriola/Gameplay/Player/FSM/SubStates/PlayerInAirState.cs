@@ -67,6 +67,7 @@ namespace Buriola.Gameplay.Player.FSM.SubStates
             if (_isGrounded && PlayerController.CurrentVelocity.y < 0.01f)
             {
                 StateMachine.ChangeState(PlayerController.LandState);
+                return;
             }
             
             if (_isTouchingWall && PlayerController.CurrentVelocity.y < 0f && _rawInputX == PlayerController.DirectionX)

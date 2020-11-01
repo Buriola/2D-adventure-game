@@ -17,9 +17,15 @@ MonoBehaviour:
     m_Bits: 1536
   GroundCheckRadius: 0.25
   MoveSpeed: 10
+  CrouchedMoveSpeed: 2
   AccelerationTimeGrounded: 0.05
   MaxClimbAngle: 80
   MaxDescendAngle: 75
+  CollisionAboveCheckDistance: 0.8
+  NormalColliderSize: {x: 0.75, y: 1.8}
+  NormalColliderOffset: {x: 0, y: -0.2}
+  CrouchedColliderSize: {x: 0.75, y: 1.3}
+  CrouchedColliderOffset: {x: 0, y: -0.45}
   AccelerationTimeAirborne: 0.25
   MaxJumpHeight: 4.5
   MinJumpHeight: 1
@@ -35,6 +41,5 @@ MonoBehaviour:
   WallJumpOff: {x: 10, y: 0}
   WallJumpLeap: {x: 12, y: 25}
   LedgeDistanceCheck: 0.5
-  LedgeJumpClimb: {x: 5, y: 16}
+  LedgeJumpClimb: {x: 4, y: 16}
   StartOffset: {x: 0.5, y: 0.85}
-  EndOffset: {x: 0.5, y: 0.75}
