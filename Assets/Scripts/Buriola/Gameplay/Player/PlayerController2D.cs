@@ -32,8 +32,6 @@ namespace Buriola.Gameplay.Player
         public int DirectionX { get; private set; }
         public int WallDirectionX { get; private set; }
         private Vector2 _velocity;
-        
-        public bool CanJump { get; private set; }
 
         private bool _gravityEnabled;
         private float _jumpTimer;
@@ -58,7 +56,6 @@ namespace Buriola.Gameplay.Player
             AnimController = GetComponent<AnimationController>();
             InputHandler = GetComponent<PlayerInputHandler>();
             DirectionX = 1;
-            CanJump = true;
             _gravityEnabled = true;
 
             _gravity = -(2 * _playerData.MaxJumpHeight) / Mathf.Pow(_playerData.TimeToJumpApex, 2);
@@ -71,8 +68,6 @@ namespace Buriola.Gameplay.Player
         {
             CurrentVelocity = Rb2d.velocity;
             StateMachine.CurrentState.OnUpdate();
-            
-            CheckIfCanJump();
         }
 
         private void FixedUpdate()
@@ -114,19 +109,6 @@ namespace Buriola.Gameplay.Player
             transform.Rotate(0f, 180f, 0f);
         }
 
-        private void CheckIfCanJump()
-        {
-            if (!CanJump)
-            {
-                _jumpTimer += Time.deltaTime;
-                if (_jumpTimer >= _playerData.JumpCooldown)
-                {
-                    _jumpTimer = 0f;
-                    CanJump = true;
-                }
-            }
-        }
-        
         private void AnimationTrigger() => StateMachine.CurrentState.AnimationTrigger();
         private void AnimationFinishTrigger() => StateMachine.CurrentState.AnimationFinishTrigger();
         
@@ -169,8 +151,7 @@ namespace Buriola.Gameplay.Player
                 _velocity.Set(xDistance * DirectionX, 0f);
             }
 
-            RaycastHit2D yHit = Physics2D.Raycast(globalLedgeCheckPos + _velocity, Vector2.down,
-                _playerData.LedgeDistanceCheck, _playerData.GroundCollisionMask);
+            RaycastHit2D yHit = Physics2D.Raycast(globalLedgeCheckPos + _velocity, Vector2.down, 1f, _playerData.GroundCollisionMask);
 
             if (yHit)
             {
@@ -209,11 +190,6 @@ namespace Buriola.Gameplay.Player
             {
                 Flip();
             }
-        }
-
-        public void SetCanJump(bool canJump)
-        {
-            CanJump = canJump;
         }
 
         public void ToggleGravity()

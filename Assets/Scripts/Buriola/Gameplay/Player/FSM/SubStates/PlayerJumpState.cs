@@ -1,6 +1,8 @@
 ﻿using Buriola.Gameplay.Player.Data;
 using Buriola.Gameplay.Player.FSM.SuperStates;
 using UnityEngine;
+using Buriola.InputSystem;
+using UnityEngine.InputSystem;
 
 namespace Buriola.Gameplay.Player.FSM.SubStates
 {
@@ -9,9 +11,6 @@ namespace Buriola.Gameplay.Player.FSM.SubStates
         private readonly float _gravity;
         private float _maxJumpVelocity;
         private float _minJumpVelocity;
-        private float _time;
-        private float _yPosition;
-        private float _finalYPosition;
         private int _amountOfJumpsLeft;
         
         public PlayerJumpState(PlayerController2D player, PlayerStateMachine stateMachine, PlayerData data, int animationHash) : base(player, stateMachine, data, animationHash)
@@ -24,37 +23,30 @@ namespace Buriola.Gameplay.Player.FSM.SubStates
         {
             base.OnEnter();
 
-            PlayerController.SetCanJump(false);
+            InputController.Instance.GameInputContext.OnActionButton0Released -= OnJumpEnded;
+            InputController.Instance.GameInputContext.OnActionButton0Released += OnJumpEnded;
             
-            _time = 0f;
             _maxJumpVelocity = Mathf.Abs(_gravity) * PlayerData.TimeToJumpApex;
             _minJumpVelocity = Mathf.Sqrt(2 * Mathf.Abs(_gravity) * PlayerData.MinJumpHeight);
-            _yPosition = PlayerController.gameObject.transform.localPosition.y;
-            _finalYPosition = _yPosition + PlayerData.MaxJumpHeight;
+
+            PlayerController.SetVelocityY(_maxJumpVelocity);
         }
 
         public override void OnUpdate()
         {
             base.OnUpdate();
 
-            if (PlayerController.InputHandler.JumpInput)
+            if (PlayerController.CurrentVelocity.y < 0)
             {
-                _time += Time.deltaTime;
-                PlayerController.SetVelocityY(_maxJumpVelocity);
-                
-                if (_time >= PlayerData.TimeToJumpApex || PlayerController.gameObject.transform.localPosition.y >= _finalYPosition)
-                {
-                    IsAbilityDone = true;
-                }
+                IsAbilityDone = true;
             }
-            else
-            {
-                if (PlayerController.CurrentVelocity.y > _minJumpVelocity)
-                {
-                    PlayerController.SetVelocityY(_minJumpVelocity);
-                    IsAbilityDone = true;
-                }
-            }
+        }
+
+        public override void OnExit()
+        {
+            base.OnExit();
+
+            InputController.Instance.GameInputContext.OnActionButton0Released -= OnJumpEnded;
         }
 
         public bool CanJumpAgain()
@@ -70,6 +62,23 @@ namespace Buriola.Gameplay.Player.FSM.SubStates
         public void ResetJumps()
         {
             _amountOfJumpsLeft = PlayerData.JumpAmount;
+        }
+
+        public override void Dispose()
+        {
+            InputController.Instance.GameInputContext.OnActionButton0Released -= OnJumpEnded;
+        }
+
+        private void OnJumpEnded(InputAction.CallbackContext context)
+        {
+            if (context.canceled)
+            {
+                if (PlayerController.CurrentVelocity.y > _minJumpVelocity)
+                {
+                    PlayerController.SetVelocityY(_minJumpVelocity);
+                    IsAbilityDone = true;
+                }
+            }
         }
     }
 }

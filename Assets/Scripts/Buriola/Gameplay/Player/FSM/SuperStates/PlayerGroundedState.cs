@@ -1,5 +1,7 @@
 ﻿using Buriola.Gameplay.Player.Data;
 using UnityEngine;
+using Buriola.InputSystem;
+using UnityEngine.InputSystem;
 
 namespace Buriola.Gameplay.Player.FSM.SuperStates
 {
@@ -18,6 +20,9 @@ namespace Buriola.Gameplay.Player.FSM.SuperStates
         public override void OnEnter()
         {
             base.OnEnter();
+
+            InputController.Instance.GameInputContext.OnActionButton0Pressed -= OnJumpPressed;
+            InputController.Instance.GameInputContext.OnActionButton0Pressed += OnJumpPressed;
             
             PlayerController.JumpState.ResetJumps();
         }
@@ -30,15 +35,22 @@ namespace Buriola.Gameplay.Player.FSM.SuperStates
             RawInputX = PlayerController.InputHandler.RawInputX;
             JumpInput = PlayerController.InputHandler.JumpInput;
 
-            if (JumpInput && PlayerController.CanJump)
-            {
-                StateMachine.ChangeState(PlayerController.JumpState);
-            }
-
             if (!IsGrounded)
             {
                 StateMachine.ChangeState(PlayerController.InAirState);
             }
+        }
+
+        public override void OnExit()
+        {
+            base.OnExit();
+            
+            InputController.Instance.GameInputContext.OnActionButton0Pressed -= OnJumpPressed;
+        }
+
+        public override void Dispose()
+        {
+            InputController.Instance.GameInputContext.OnActionButton0Pressed -= OnJumpPressed;
         }
 
         protected override void DoChecks()
@@ -46,6 +58,14 @@ namespace Buriola.Gameplay.Player.FSM.SuperStates
             base.DoChecks();
 
             IsGrounded = PlayerController.IsGrounded();
+        }
+
+        private void OnJumpPressed(InputAction.CallbackContext context)
+        {
+            if (context.ReadValueAsButton())
+            {
+                StateMachine.ChangeState(PlayerController.JumpState);
+            }
         }
     }
 }

@@ -21,9 +21,9 @@ MonoBehaviour:
   MaxClimbAngle: 80
   MaxDescendAngle: 75
   AccelerationTimeAirborne: 0.2
-  MaxJumpHeight: 2
+  MaxJumpHeight: 4.5
   MinJumpHeight: 1
-  TimeToJumpApex: 0.2
+  TimeToJumpApex: 0.35
   JumpAmount: 0
   JumpCooldown: 0.2
   WallCollisionMask:
