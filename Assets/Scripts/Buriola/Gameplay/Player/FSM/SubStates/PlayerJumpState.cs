@@ -71,13 +71,10 @@ namespace Buriola.Gameplay.Player.FSM.SubStates
 
         private void OnJumpEnded(InputAction.CallbackContext context)
         {
-            if (context.canceled)
+            if (PlayerController.CurrentVelocity.y > _minJumpVelocity)
             {
-                if (PlayerController.CurrentVelocity.y > _minJumpVelocity)
-                {
-                    PlayerController.SetVelocityY(_minJumpVelocity);
-                    IsAbilityDone = true;
-                }
+                PlayerController.SetVelocityY(_minJumpVelocity);
+                IsAbilityDone = true;
             }
         }
     }
