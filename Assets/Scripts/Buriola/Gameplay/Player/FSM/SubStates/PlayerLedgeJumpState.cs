@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using Buriola.Gameplay.Player.Data;
+﻿using Buriola.Gameplay.Player.Data;
 using Buriola.Gameplay.Player.FSM.SuperStates;
 using UnityEngine;
 

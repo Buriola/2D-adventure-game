@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using Buriola.InputSystem;
 using CallbackContext = UnityEngine.InputSystem.InputAction.CallbackContext;
 
@@ -32,8 +33,8 @@ namespace Buriola.Gameplay.Player
         {
             MovementAxis = obj.ReadValue<Vector2>();
 
-            RawInputX = (MovementAxis * Vector2.right).normalized.x;
-            RawInputY = (MovementAxis * Vector2.up).normalized.y;
+            RawInputX = (MovementAxis.x * Vector2.right).normalized.x;
+            RawInputY = (MovementAxis.y * Vector2.up).normalized.y;
         }
 
         private void OnMovementEnded(CallbackContext obj)
