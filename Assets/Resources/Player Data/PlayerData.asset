@@ -20,21 +20,21 @@ MonoBehaviour:
   AccelerationTimeGrounded: 0.05
   MaxClimbAngle: 80
   MaxDescendAngle: 75
-  AccelerationTimeAirborne: 0.2
+  AccelerationTimeAirborne: 0.25
   MaxJumpHeight: 4.5
   MinJumpHeight: 1
   TimeToJumpApex: 0.35
   JumpAmount: 0
-  JumpCooldown: 0.2
   WallCollisionMask:
     serializedVersion: 2
     m_Bits: 1024
   WallDistanceCheck: 0.5
   WallSlideMaxSpeed: 3
   WallStickTime: 0.25
-  WallJumpClimb: {x: 10, y: 30}
+  WallJumpClimb: {x: 12, y: 23}
   WallJumpOff: {x: 10, y: 0}
-  WallJumpLeap: {x: 15, y: 30}
+  WallJumpLeap: {x: 12, y: 25}
   LedgeDistanceCheck: 0.5
+  LedgeJumpClimb: {x: 5, y: 16}
   StartOffset: {x: 0.5, y: 0.85}
   EndOffset: {x: 0.5, y: 0.75}

@@ -3,7 +3,7 @@
 namespace Buriola.Gameplay.Player.Data
 {
     [CreateAssetMenu(fileName = "New Player Data", menuName = "Data/Player Data/Base Data")]
-    public class PlayerData : ScriptableObject
+    public sealed class PlayerData : ScriptableObject
     {
         [Header("Movement")]
         public LayerMask GroundCollisionMask;
@@ -19,7 +19,6 @@ namespace Buriola.Gameplay.Player.Data
         public float MinJumpHeight = 1f;
         public float TimeToJumpApex = 0.4f;
         public int JumpAmount = 1;
-        public float JumpCooldown = 0.5f;
         
         [Header("Wall Slide")]
         public LayerMask WallCollisionMask;
@@ -32,6 +31,7 @@ namespace Buriola.Gameplay.Player.Data
 
         [Header("Ledge Movement")] 
         public float LedgeDistanceCheck = 0.5f;
+        public Vector2 LedgeJumpClimb = Vector2.zero;
         public Vector2 StartOffset = Vector2.zero;
         public Vector2 EndOffset = Vector2.zero;
     }

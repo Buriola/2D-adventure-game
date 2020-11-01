@@ -1,8 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-namespace Buriola.Gameplay.Player.FSM
+﻿namespace Buriola.Gameplay.Player.FSM
 {
     public sealed class PlayerStateMachine
     {

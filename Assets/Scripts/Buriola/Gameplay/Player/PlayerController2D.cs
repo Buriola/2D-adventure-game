@@ -16,6 +16,7 @@ namespace Buriola.Gameplay.Player
         [SerializeField] private Vector2 _groundCheckPoint = Vector2.zero;
         [SerializeField] private Vector2 _ledgeCheckPoint = Vector2.zero;
 
+        public float Gravity { get; private set; }
         public Rigidbody2D Rb2d { get; private set; }
         public Vector2 CurrentVelocity { get; private set; }
         public PlayerStateMachine StateMachine { get; private set; }
@@ -28,6 +29,7 @@ namespace Buriola.Gameplay.Player
         public PlayerLandState LandState { get; private set; }
         public PlayerWallSlideState WallSlideState { get; private set; }
         public PlayerLedgeClimbState LedgeClimbState { get; private set; }
+        public PlayerLedgeJumpState LedgeJumpState { get; private set; }
         
         public int DirectionX { get; private set; }
         public int WallDirectionX { get; private set; }
@@ -35,7 +37,7 @@ namespace Buriola.Gameplay.Player
 
         private bool _gravityEnabled;
         private float _jumpTimer;
-        private float _gravity;
+        
         private Vector2 _gravityForce;
 
         private void Awake()
@@ -48,6 +50,7 @@ namespace Buriola.Gameplay.Player
             LandState = new PlayerLandState(this, StateMachine, _playerData, AnimationConstants.PLAYER_LAND_HASH);
             WallSlideState = new PlayerWallSlideState(this, StateMachine, _playerData, AnimationConstants.PLAYER_WALL_SLIDING_HASH);
             LedgeClimbState = new PlayerLedgeClimbState(this, StateMachine, _playerData, AnimationConstants.PLAYER_LEDGE_GRAB_HASH);
+            LedgeJumpState = new PlayerLedgeJumpState(this, StateMachine, _playerData, AnimationConstants.PLAYER_LEDGE_JUMP_HASH);
         }
 
         private void Start()
@@ -58,8 +61,8 @@ namespace Buriola.Gameplay.Player
             DirectionX = 1;
             _gravityEnabled = true;
 
-            _gravity = -(2 * _playerData.MaxJumpHeight) / Mathf.Pow(_playerData.TimeToJumpApex, 2);
-            _gravityForce.Set(0f, _gravity);
+            Gravity = -(2 * _playerData.MaxJumpHeight) / Mathf.Pow(_playerData.TimeToJumpApex, 2);
+            _gravityForce.Set(0f, Gravity);
             
             StateMachine.Initialize(IdleState);
         }

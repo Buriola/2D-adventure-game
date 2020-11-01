@@ -35,8 +35,8 @@ namespace Buriola.Gameplay.Player.FSM.SubStates
             float yStartPosition = _cornerPosition.y - PlayerData.StartOffset.y;
             _startPosition.Set(xStartPosition, yStartPosition);
 
-            float xEndPosition = _cornerPosition.x + (PlayerController.DirectionX * PlayerData.EndOffset.x);
-            float yEndPosition = _cornerPosition.y + PlayerData.EndOffset.y;
+            float xEndPosition = PlayerController.transform.position.x + .1f;
+            float yEndPosition = PlayerController.transform.position.y + 1.15f;
             _endPosition.Set(xEndPosition, yEndPosition);
 
             PlayerController.transform.position = _startPosition;
@@ -90,14 +90,7 @@ namespace Buriola.Gameplay.Player.FSM.SubStates
         {
             base.AnimationFinishTrigger();
 
-            if (Mathf.Abs(_xInput) > 0)
-            {
-                StateMachine.ChangeState(PlayerController.MoveState);
-            }
-            else
-            {
-                StateMachine.ChangeState(PlayerController.IdleState);
-            }
+            StateMachine.ChangeState(PlayerController.LedgeJumpState);
         }
 
         public void SetDetectedPosition(Vector2 position) => _detectedPosition = position;
