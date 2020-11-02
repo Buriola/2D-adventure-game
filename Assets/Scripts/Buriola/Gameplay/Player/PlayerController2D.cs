@@ -49,18 +49,19 @@ namespace Buriola.Gameplay.Player
         private void Awake()
         {
             StateMachine = new PlayerStateMachine();
-            IdleState = new PlayerIdleState(this, StateMachine, _playerData, AnimationConstants.PLAYER_IDLE_2_HASH);
-            MoveState = new PlayerMoveState(this, StateMachine, _playerData, AnimationConstants.PLAYER_RUN_2_HASH);
-            JumpState = new PlayerJumpState(this, StateMachine, _playerData, AnimationConstants.PLAYER_JUMP_HASH);
-            InAirState = new PlayerInAirState(this, StateMachine, _playerData, AnimationConstants.PLAYER_AIR_HASH);
-            LandState = new PlayerLandState(this, StateMachine, _playerData, AnimationConstants.PLAYER_LAND_HASH);
-            WallSlideState = new PlayerWallSlideState(this, StateMachine, _playerData, AnimationConstants.PLAYER_WALL_SLIDING_HASH);
-            LedgeClimbState = new PlayerLedgeClimbState(this, StateMachine, _playerData, AnimationConstants.PLAYER_LEDGE_GRAB_HASH);
-            LedgeJumpState = new PlayerLedgeJumpState(this, StateMachine, _playerData, AnimationConstants.PLAYER_LEDGE_JUMP_HASH);
-            CrouchIdleState = new PlayerCrouchIdleState(this, StateMachine, _playerData, AnimationConstants.PLAYER_CROUCH_IDLE_HASH);
-            CrouchMoveState = new PlayerCrouchMoveState(this, StateMachine, _playerData, AnimationConstants.PLAYER_CROUCH_WALK_HASH);
+            
+            IdleState        = new PlayerIdleState(this, StateMachine, _playerData, AnimationConstants.PLAYER_IDLE_2_HASH);
+            MoveState        = new PlayerMoveState(this, StateMachine, _playerData, AnimationConstants.PLAYER_RUN_2_HASH);
+            JumpState        = new PlayerJumpState(this, StateMachine, _playerData, AnimationConstants.PLAYER_JUMP_HASH);
+            InAirState       = new PlayerInAirState(this, StateMachine, _playerData, AnimationConstants.PLAYER_AIR_HASH);
+            LandState        = new PlayerLandState(this, StateMachine, _playerData, AnimationConstants.PLAYER_LAND_HASH);
+            WallSlideState   = new PlayerWallSlideState(this, StateMachine, _playerData, AnimationConstants.PLAYER_WALL_SLIDING_HASH);
+            LedgeClimbState  = new PlayerLedgeClimbState(this, StateMachine, _playerData, AnimationConstants.PLAYER_LEDGE_GRAB_HASH);
+            LedgeJumpState   = new PlayerLedgeJumpState(this, StateMachine, _playerData, AnimationConstants.PLAYER_LEDGE_JUMP_HASH);
+            CrouchIdleState  = new PlayerCrouchIdleState(this, StateMachine, _playerData, AnimationConstants.PLAYER_CROUCH_IDLE_HASH);
+            CrouchMoveState  = new PlayerCrouchMoveState(this, StateMachine, _playerData, AnimationConstants.PLAYER_CROUCH_WALK_HASH);
             SwordAttackState = new PlayerSwordAttackState(this, StateMachine, _playerData, AnimationConstants.PLAYER_ATTACK_1_HASH, 3);
-            HandAttackState = new PlayerHandAttackState(this, StateMachine, _playerData, AnimationConstants.PLAYER_ATTACK_1_HASH, 5);
+            HandAttackState  = new PlayerHandAttackState(this, StateMachine, _playerData, AnimationConstants.PLAYER_PUNCH_1_HASH, 5);
         }
 
         private void Start()
