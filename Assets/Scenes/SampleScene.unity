@@ -545,7 +545,7 @@ MonoBehaviour:
   _playerData: {fileID: 11400000, guid: 202625ade2ab0c347b957c724375e7a7, type: 2}
   _groundCheckPoint: {x: 0, y: -0.87}
   _ledgeCheckPoint: {x: 0, y: 0.75}
-  _debugAttack: 1
+  _debugAttack: 0
   _attackRadius: 1.5
   _attackCenterPoint: {x: -0, y: -0.45}
 --- !u!114 &822648622
