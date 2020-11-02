@@ -30,6 +30,8 @@ namespace Buriola.Gameplay.Player.FSM.SuperStates
             InputController.Instance.GameInputContext.OnActionButton0Pressed += OnJumpPressed;
             InputController.Instance.GameInputContext.OnActionButton2Pressed -= OnAttackPressed;
             InputController.Instance.GameInputContext.OnActionButton2Pressed += OnAttackPressed;
+            InputController.Instance.GameInputContext.OnActionButton1Pressed -= OnSecondaryAttackPressed;
+            InputController.Instance.GameInputContext.OnActionButton1Pressed += OnSecondaryAttackPressed;
             
             PlayerController.JumpState.ResetJumps();
         }
@@ -58,12 +60,14 @@ namespace Buriola.Gameplay.Player.FSM.SuperStates
         {
             base.OnExit();
             
+            InputController.Instance.GameInputContext.OnActionButton1Pressed -= OnSecondaryAttackPressed;
             InputController.Instance.GameInputContext.OnActionButton2Pressed -= OnAttackPressed;
             InputController.Instance.GameInputContext.OnActionButton0Pressed -= OnJumpPressed;
         }
 
         public override void Dispose()
         {
+            InputController.Instance.GameInputContext.OnActionButton1Pressed -= OnSecondaryAttackPressed;
             InputController.Instance.GameInputContext.OnActionButton2Pressed -= OnAttackPressed;
             InputController.Instance.GameInputContext.OnActionButton0Pressed -= OnJumpPressed;
         }
@@ -88,7 +92,15 @@ namespace Buriola.Gameplay.Player.FSM.SuperStates
         {
             if (context.ReadValueAsButton() && !ObstacleAbove)
             {
-                StateMachine.ChangeState(PlayerController.AttackState);
+                StateMachine.ChangeState(PlayerController.SwordAttackState);
+            }
+        }
+
+        private void OnSecondaryAttackPressed(InputAction.CallbackContext context)
+        {
+            if (context.ReadValueAsButton() && !ObstacleAbove)
+            {
+                StateMachine.ChangeState(PlayerController.HandAttackState);
             }
         }
     }

@@ -4,17 +4,17 @@ using UnityEngine;
 
 namespace Buriola.Gameplay.Player.FSM
 {
-    public class PlayerState : IDisposable
+    public abstract class PlayerState : IDisposable
     {
-        protected PlayerController2D PlayerController;
-        protected PlayerStateMachine StateMachine;
-        protected PlayerData PlayerData;
+        protected readonly PlayerController2D PlayerController;
+        protected readonly PlayerStateMachine StateMachine;
+        protected readonly PlayerData PlayerData;
 
         protected bool IsAnimationFinished;
         protected float StartTime;
         protected int AnimationHash;
         
-        public PlayerState(PlayerController2D player, PlayerStateMachine stateMachine, PlayerData data, int animationHash)
+        protected PlayerState(PlayerController2D player, PlayerStateMachine stateMachine, PlayerData data, int animationHash)
         {
             PlayerController = player;
             StateMachine = stateMachine;

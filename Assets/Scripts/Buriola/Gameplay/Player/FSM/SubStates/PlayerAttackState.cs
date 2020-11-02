@@ -8,30 +8,23 @@ using UnityEngine.InputSystem;
 
 namespace Buriola.Gameplay.Player.FSM.SubStates
 {
-    public sealed class PlayerAttackState : PlayerAbilityState
+    public abstract class PlayerAttackState : PlayerAbilityState
     {
         private float _inputTimer;
         private bool _inputRegistered;
         private int _attackCounter;
 
-        private readonly float _inputHoldTime = 0.5f;
-        private readonly Dictionary<int, int> _counterToAnim;
+        private const float _inputHoldTime = 0.5f;
+        protected Dictionary<int, int> CounterToAnim;
         private readonly int _attackCombo;
-        private readonly int _attack1Hash = AnimationConstants.PLAYER_ATTACK_1_HASH;
-        private readonly int _attack2Hash = AnimationConstants.PLAYER_ATTACK_2_HASH;
-        private readonly int _attack3Hash = AnimationConstants.PLAYER_ATTACK_3_HASH;
 
-        public PlayerAttackState(PlayerController2D player, PlayerStateMachine stateMachine, PlayerData data, int animationHash) : base(player, stateMachine, data, animationHash)
+        protected PlayerAttackState(PlayerController2D player, PlayerStateMachine stateMachine, PlayerData data, int animationHash, int attackCombo) : base(player, stateMachine, data, animationHash)
         {
-            _attackCombo = 3;
-            _counterToAnim = new Dictionary<int, int> {[1] = _attack1Hash, [2] = _attack2Hash, [3] = _attack3Hash};
+            _attackCombo = attackCombo;
         }
 
         public override void OnEnter()
         {
-            InputController.Instance.GameInputContext.OnActionButton2Pressed -= OnAttackPressed;
-            InputController.Instance.GameInputContext.OnActionButton2Pressed += OnAttackPressed;
-            
             IsAbilityDone = false;
             StartTime = Time.time;
             IsAnimationFinished = false;
@@ -39,7 +32,7 @@ namespace Buriola.Gameplay.Player.FSM.SubStates
             _inputTimer = 0f;
             _attackCounter = 1;
             
-            AnimationHash = _counterToAnim[_attackCounter];
+            AnimationHash = CounterToAnim[_attackCounter];
             _attackCounter++;
             
             PlayerController.SetVelocity(Vector2.zero);
@@ -60,17 +53,6 @@ namespace Buriola.Gameplay.Player.FSM.SubStates
             }
         }
 
-        public override void OnExit()
-        {
-            base.OnExit();
-            InputController.Instance.GameInputContext.OnActionButton2Pressed -= OnAttackPressed;
-        }
-
-        public override void Dispose()
-        {
-            InputController.Instance.GameInputContext.OnActionButton2Pressed -= OnAttackPressed;
-        }
-
         public override void AnimationFinishTrigger()
         {
             base.AnimationFinishTrigger();
@@ -79,7 +61,7 @@ namespace Buriola.Gameplay.Player.FSM.SubStates
             {
                 IsAnimationFinished = false;
                 
-                AnimationHash = _counterToAnim[_attackCounter];
+                AnimationHash = CounterToAnim[_attackCounter];
                 _attackCounter++;
                 
                 UseAttackInput();
@@ -92,7 +74,7 @@ namespace Buriola.Gameplay.Player.FSM.SubStates
             }
         }
 
-        private void OnAttackPressed(InputAction.CallbackContext obj)
+        protected void OnAttackPressed(InputAction.CallbackContext obj)
         {
             if (obj.ReadValueAsButton())
             {

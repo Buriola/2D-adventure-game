@@ -2,16 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CombatController : MonoBehaviour
+namespace Buriola.Gameplay.Combat
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
+    public class CombatController : MonoBehaviour
     {
         
     }
