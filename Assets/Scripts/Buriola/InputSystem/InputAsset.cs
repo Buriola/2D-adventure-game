@@ -199,6 +199,17 @@ namespace Buriola.InputSystem
                 },
                 {
                     ""name"": """",
+                    ""id"": ""72ed2bd6-5f54-4a7f-b863-94edfe6e485a"",
+                    ""path"": ""<Mouse>/leftButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard & Mouse"",
+                    ""action"": ""ActionButton2"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
                     ""id"": ""137b59a3-37f2-4737-a8c2-782d0a141d88"",
                     ""path"": ""<Gamepad>/buttonNorth"",
                     ""interactions"": """",

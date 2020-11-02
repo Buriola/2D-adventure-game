@@ -88,7 +88,7 @@ namespace Buriola.Gameplay.Player.FSM.SubStates
             }
             else
             {
-                StateMachine.ChangeState(PlayerController.IdleState);
+                IsAbilityDone = true;
             }
         }
 
