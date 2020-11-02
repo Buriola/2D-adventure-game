@@ -10,20 +10,17 @@ namespace Buriola.Gameplay.Player.FSM.SubStates
 {
     public sealed class PlayerAttackState : PlayerAbilityState
     {
-        private readonly float _inputHoldTime = 0.25f;
         private float _inputTimer;
         private bool _inputRegistered;
-        private float _velocityXSmoothing;
+        private int _attackCounter;
 
+        private readonly float _inputHoldTime = 0.25f;
+        private readonly Dictionary<int, int> _counterToAnim;
+        private readonly int _attackCombo;
         private readonly int _attack1Hash = AnimationConstants.PLAYER_ATTACK_1_HASH;
         private readonly int _attack2Hash = AnimationConstants.PLAYER_ATTACK_2_HASH;
         private readonly int _attack3Hash = AnimationConstants.PLAYER_ATTACK_3_HASH;
 
-        private int _attackCounter;
-        private readonly int _attackCombo;
-
-        private readonly Dictionary<int, int> _counterToAnim;
-        
         public PlayerAttackState(PlayerController2D player, PlayerStateMachine stateMachine, PlayerData data, int animationHash) : base(player, stateMachine, data, animationHash)
         {
             _attackCombo = 3;
@@ -36,18 +33,17 @@ namespace Buriola.Gameplay.Player.FSM.SubStates
             InputController.Instance.GameInputContext.OnActionButton2Pressed += OnAttackPressed;
             
             IsAbilityDone = false;
-            
             StartTime = Time.time;
             IsAnimationFinished = false;
+            
             _inputTimer = 0f;
-
             _attackCounter = 1;
+            
             AnimationHash = _counterToAnim[_attackCounter];
+            _attackCounter++;
             
             PlayerController.SetVelocity(Vector2.zero);
             PlayerController.AnimController.PlayAnimation(AnimationHash);
-            
-            _attackCounter++;
         }
 
         public override void OnUpdate()
@@ -85,8 +81,9 @@ namespace Buriola.Gameplay.Player.FSM.SubStates
                 IsAnimationFinished = false;
                 
                 AnimationHash = _counterToAnim[_attackCounter];
-                PlayerController.AnimController.PlayAnimation(AnimationHash);
                 _attackCounter++;
+                
+                PlayerController.AnimController.PlayAnimation(AnimationHash);
             }
             else
             {
