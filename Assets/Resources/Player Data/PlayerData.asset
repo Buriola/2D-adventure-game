@@ -46,3 +46,55 @@ MonoBehaviour:
   LedgeDistanceCheck: 0.5
   LedgeJumpClimb: {x: 4, y: 16}
   StartOffset: {x: 0.5, y: 0.85}
+  InputBufferTime: 0.5
+  DamageableMask:
+    serializedVersion: 2
+    m_Bits: 6144
+  SwordAttack1:
+    Damage: 1
+    AttackRadius: 0.8
+    AttackCenterPoint: {x: 0.7, y: 0.1}
+    KnockbackForce: {x: 1, y: 12}
+    ApplyKnockback: 1
+  SwordAttack2:
+    Damage: 1
+    AttackRadius: 0.8
+    AttackCenterPoint: {x: 0.7, y: -0.25}
+    KnockbackForce: {x: 3, y: 10}
+    ApplyKnockback: 1
+  SwordAttack3:
+    Damage: 1
+    AttackRadius: 1.5
+    AttackCenterPoint: {x: 0, y: -0.45}
+    KnockbackForce: {x: 8, y: 15}
+    ApplyKnockback: 1
+  PunchAttack1:
+    Damage: 1
+    AttackRadius: 1
+    AttackCenterPoint: {x: 0, y: 0}
+    KnockbackForce: {x: 0, y: 0}
+    ApplyKnockback: 0
+  PunchAttack2:
+    Damage: 1
+    AttackRadius: 1
+    AttackCenterPoint: {x: 0, y: 0}
+    KnockbackForce: {x: 0, y: 0}
+    ApplyKnockback: 0
+  PunchAttack3:
+    Damage: 1
+    AttackRadius: 1
+    AttackCenterPoint: {x: 0, y: 0}
+    KnockbackForce: {x: 0, y: 0}
+    ApplyKnockback: 0
+  KickAttack1:
+    Damage: 1
+    AttackRadius: 1
+    AttackCenterPoint: {x: 0, y: 0}
+    KnockbackForce: {x: 0, y: 0}
+    ApplyKnockback: 0
+  KickAttack2:
+    Damage: 1
+    AttackRadius: 1
+    AttackCenterPoint: {x: 0, y: 0}
+    KnockbackForce: {x: 0, y: 0}
+    ApplyKnockback: 0

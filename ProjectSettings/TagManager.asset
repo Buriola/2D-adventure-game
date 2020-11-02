@@ -19,8 +19,8 @@ TagManager:
   - Player
   - Ground
   - Wall
-  - 
-  - 
+  - Enemy
+  - Damageable
   - 
   - 
   - 

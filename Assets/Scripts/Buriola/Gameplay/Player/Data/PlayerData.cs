@@ -42,5 +42,18 @@ namespace Buriola.Gameplay.Player.Data
         public float LedgeDistanceCheck = 0.5f;
         public Vector2 LedgeJumpClimb = Vector2.zero;
         public Vector2 StartOffset = Vector2.zero;
+
+        [Header("Combat Settings")]
+        public float InputBufferTime = 0.5f;
+        public LayerMask DamageableMask = default;
+        [Header("Attacks Info")]
+        public AttackData SwordAttack1;
+        public AttackData SwordAttack2;
+        public AttackData SwordAttack3;
+        public AttackData PunchAttack1;
+        public AttackData PunchAttack2;
+        public AttackData PunchAttack3;
+        public AttackData KickAttack1;
+        public AttackData KickAttack2;
     }
 }
