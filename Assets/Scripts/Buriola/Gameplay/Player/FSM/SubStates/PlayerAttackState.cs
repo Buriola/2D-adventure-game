@@ -14,7 +14,7 @@ namespace Buriola.Gameplay.Player.FSM.SubStates
         private bool _inputRegistered;
         private int _attackCounter;
 
-        private readonly float _inputHoldTime = 0.25f;
+        private readonly float _inputHoldTime = 0.5f;
         private readonly Dictionary<int, int> _counterToAnim;
         private readonly int _attackCombo;
         private readonly int _attack1Hash = AnimationConstants.PLAYER_ATTACK_1_HASH;
@@ -55,8 +55,7 @@ namespace Buriola.Gameplay.Player.FSM.SubStates
                 _inputTimer += Time.deltaTime;
                 if (_inputTimer >= _inputHoldTime)
                 {
-                    _inputRegistered = false;
-                    _inputTimer = 0f;
+                    UseAttackInput();
                 }
             }
         }
@@ -83,6 +82,8 @@ namespace Buriola.Gameplay.Player.FSM.SubStates
                 AnimationHash = _counterToAnim[_attackCounter];
                 _attackCounter++;
                 
+                UseAttackInput();
+                
                 PlayerController.AnimController.PlayAnimation(AnimationHash);
             }
             else
@@ -98,6 +99,12 @@ namespace Buriola.Gameplay.Player.FSM.SubStates
                 _inputRegistered = true;
                 _inputTimer = 0f;
             }
+        }
+
+        private void UseAttackInput()
+        {
+            _inputRegistered = false;
+            _inputTimer = 0f;
         }
     }
 }
