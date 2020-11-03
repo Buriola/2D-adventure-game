@@ -12,8 +12,6 @@ namespace Buriola.Gameplay.Player.FSM.SubStates
         private float _timer;
         private float _velocityXSmoothing;
 
-        //private bool _playStandAnimation;
-
         public PlayerSlideState(PlayerController2D player, PlayerStateMachine stateMachine, PlayerData data, int animationHash) : base(player, stateMachine, data, animationHash)
         {
         }

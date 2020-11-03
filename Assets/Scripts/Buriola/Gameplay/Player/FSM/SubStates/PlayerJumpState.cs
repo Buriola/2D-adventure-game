@@ -1,4 +1,5 @@
-﻿using Buriola.Gameplay.Player.Data;
+﻿using Buriola.Gameplay.Animations;
+using Buriola.Gameplay.Player.Data;
 using Buriola.Gameplay.Player.FSM.SuperStates;
 using UnityEngine;
 using Buriola.InputSystem;
@@ -12,6 +13,10 @@ namespace Buriola.Gameplay.Player.FSM.SubStates
         private float _maxJumpVelocity;
         private float _minJumpVelocity;
         private int _amountOfJumpsLeft;
+
+        private bool _somersault;
+        private readonly int _jumpHash = AnimationConstants.PLAYER_JUMP_HASH;
+        private readonly int _somersaultHash = AnimationConstants.PLAYER_SOMERSAULT_HASH;
         
         public PlayerJumpState(PlayerController2D player, PlayerStateMachine stateMachine, PlayerData data, int animationHash) : base(player, stateMachine, data, animationHash)
         {
@@ -21,6 +26,16 @@ namespace Buriola.Gameplay.Player.FSM.SubStates
         
         public override void OnEnter()
         {
+            if (_somersault)
+            {
+                AnimationHash = _somersaultHash;
+                _somersault = false;
+            }
+            else
+            {
+                AnimationHash = _jumpHash;
+            }
+            
             base.OnEnter();
 
             InputController.Instance.GameInputContext.OnActionButton0Released -= OnJumpEnded;
@@ -52,6 +67,11 @@ namespace Buriola.Gameplay.Player.FSM.SubStates
         public bool CanJumpAgain()
         {
             bool canJumpAgain = _amountOfJumpsLeft > 0;
+
+            if (canJumpAgain)
+            {
+                _somersault = true;
+            }
             
             _amountOfJumpsLeft--;
             if (_amountOfJumpsLeft <= 0) _amountOfJumpsLeft = 0;

@@ -93,9 +93,9 @@ namespace Buriola.Gameplay.Player.FSM.SubStates
 
         private void OnJumpPressed(InputAction.CallbackContext obj)
         {
-            if (obj.ReadValueAsButton())
+            if (obj.ReadValueAsButton() && PlayerController.CurrentVelocity.y < 0f)
             {
-                if (PlayerController.JumpState.CanJumpAgain())
+                if (PlayerController.JumpState.CanJumpAgain() && !_isTouchingWall)
                 {
                     StateMachine.ChangeState(PlayerController.JumpState);
                 }
