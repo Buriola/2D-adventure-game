@@ -56,6 +56,7 @@ namespace Buriola.Gameplay.Player
         public PlayerCrouchMoveState CrouchMoveState { get; private set; }
         public PlayerAttackState SwordAttackState { get; private set; }
         public PlayerAttackState HandAttackState { get; private set; }
+        public PlayerAttackState AirAttackState { get; private set; }
         #endregion
 
         private void Awake()
@@ -75,6 +76,7 @@ namespace Buriola.Gameplay.Player
             CrouchMoveState  = new PlayerCrouchMoveState(this, StateMachine, _playerData, AnimationConstants.PLAYER_CROUCH_WALK_HASH);
             SwordAttackState = new PlayerSwordAttackState(this, StateMachine, _playerData, AnimationConstants.PLAYER_ATTACK_1_HASH, 3);
             HandAttackState  = new PlayerHandAttackState(this, StateMachine, _playerData, AnimationConstants.PLAYER_PUNCH_1_HASH, 5);
+            AirAttackState   = new PlayerAirAttackState(this, StateMachine, _playerData, AnimationConstants.PLAYER_AIR_ATTACK_1_HASH, 2);
         }
 
         private void Start()
@@ -122,6 +124,7 @@ namespace Buriola.Gameplay.Player
             CrouchMoveState.Dispose();
             SwordAttackState.Dispose();
             HandAttackState.Dispose();
+            AirAttackState.Dispose();
         }
 
         private void OnDrawGizmos()
@@ -254,6 +257,11 @@ namespace Buriola.Gameplay.Player
         public void ToggleGravity()
         {
             _gravityEnabled = !_gravityEnabled;
+        }
+
+        public void SetGravityEnabled(bool value)
+        {
+            _gravityEnabled = value;
         }
         
         //Called by animation events

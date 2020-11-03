@@ -2,6 +2,7 @@
 using Buriola.Gameplay.Animations;
 using Buriola.Gameplay.Player.Data;
 using Buriola.InputSystem;
+using UnityEngine;
 
 namespace Buriola.Gameplay.Player.FSM.SubStates
 {
@@ -24,6 +25,8 @@ namespace Buriola.Gameplay.Player.FSM.SubStates
             
             InputController.Instance.GameInputContext.OnActionButton1Pressed -= OnAttackPressed;
             InputController.Instance.GameInputContext.OnActionButton1Pressed += OnAttackPressed;
+            
+            PlayerController.SetVelocity(Vector2.zero);
         }
         
         public override void OnExit()

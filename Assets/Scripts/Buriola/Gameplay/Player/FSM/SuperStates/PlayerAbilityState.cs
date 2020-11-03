@@ -5,9 +5,9 @@ namespace Buriola.Gameplay.Player.FSM.SuperStates
     public class PlayerAbilityState : PlayerState
     {
         protected bool IsAbilityDone;
-        private bool _isGrounded;
+        protected bool IsGrounded;
 
-        public PlayerAbilityState(PlayerController2D player, PlayerStateMachine stateMachine, PlayerData data, int animationHash) : base(player, stateMachine, data, animationHash)
+        protected PlayerAbilityState(PlayerController2D player, PlayerStateMachine stateMachine, PlayerData data, int animationHash) : base(player, stateMachine, data, animationHash)
         {
         }
 
@@ -24,7 +24,7 @@ namespace Buriola.Gameplay.Player.FSM.SuperStates
 
             if (IsAbilityDone)
             {
-                if (_isGrounded && PlayerController.CurrentVelocity.y < 0.01f)
+                if (IsGrounded && PlayerController.CurrentVelocity.y < 0.01f)
                 {
                     StateMachine.ChangeState(PlayerController.IdleState);
                 }
@@ -39,7 +39,7 @@ namespace Buriola.Gameplay.Player.FSM.SuperStates
         {
             base.DoChecks();
 
-            _isGrounded = PlayerController.IsGrounded();
+            IsGrounded = PlayerController.IsGrounded();
         }
     }
 }

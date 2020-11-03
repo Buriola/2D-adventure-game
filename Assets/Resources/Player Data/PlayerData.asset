@@ -27,9 +27,9 @@ MonoBehaviour:
   CrouchedColliderSize: {x: 0.75, y: 1.3}
   CrouchedColliderOffset: {x: 0, y: -0.45}
   AccelerationTimeAirborne: 0.1
-  MaxJumpHeight: 3
+  MaxJumpHeight: 2.5
   MinJumpHeight: 0.5
-  TimeToJumpApex: 0.4
+  TimeToJumpApex: 0.35
   JumpAmount: 0
   WallCollisionMask:
     serializedVersion: 2

@@ -25,6 +25,9 @@ namespace Buriola.Gameplay.Player.FSM.SubStates
             InputController.Instance.GameInputContext.OnActionButton0Pressed -= OnJumpPressed;
             InputController.Instance.GameInputContext.OnActionButton0Pressed += OnJumpPressed;
             
+            InputController.Instance.GameInputContext.OnActionButton2Pressed -= OnAttackPressed;
+            InputController.Instance.GameInputContext.OnActionButton2Pressed += OnAttackPressed;
+            
             StartTime = Time.time;
             IsAnimationFinished = false;
             _animationSet = false;
@@ -53,6 +56,7 @@ namespace Buriola.Gameplay.Player.FSM.SubStates
         {
             base.OnExit();
             
+            InputController.Instance.GameInputContext.OnActionButton2Pressed -= OnAttackPressed;
             InputController.Instance.GameInputContext.OnActionButton0Pressed -= OnJumpPressed;
         }
 
@@ -95,6 +99,14 @@ namespace Buriola.Gameplay.Player.FSM.SubStates
                 {
                     StateMachine.ChangeState(PlayerController.JumpState);
                 }
+            }
+        }
+
+        private void OnAttackPressed(InputAction.CallbackContext obj)
+        {
+            if (obj.ReadValueAsButton())
+            {
+                StateMachine.ChangeState(PlayerController.AirAttackState);
             }
         }
     }

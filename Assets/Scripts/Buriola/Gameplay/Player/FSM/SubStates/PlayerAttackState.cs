@@ -34,7 +34,6 @@ namespace Buriola.Gameplay.Player.FSM.SubStates
             AnimationHash = CounterToAnim[_attackCounter];
             _attackCounter++;
             
-            PlayerController.SetVelocity(Vector2.zero);
             PlayerController.AnimController.PlayAnimation(AnimationHash);
         }
 
