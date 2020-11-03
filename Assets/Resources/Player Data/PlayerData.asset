@@ -21,10 +21,10 @@ MonoBehaviour:
   AccelerationTimeGrounded: 0.05
   MaxClimbAngle: 80
   MaxDescendAngle: 75
-  SlideDistance: 3.5
-  SlideSpeed: 20
+  SlideDistance: 2.5
+  SlideSpeed: 15
   SlideAcceleration: 0.05
-  SlideEaseAmount: 0.1
+  SlideCooldown: 0.5
   CollisionAboveCheckDistance: 0.8
   NormalColliderSize: {x: 0.75, y: 1.8}
   NormalColliderOffset: {x: 0, y: -0.2}
