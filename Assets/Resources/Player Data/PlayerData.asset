@@ -46,7 +46,7 @@ MonoBehaviour:
   LedgeDistanceCheck: 0.5
   LedgeJumpClimb: {x: 5, y: 10}
   StartOffset: {x: 0.5, y: 0.85}
-  InputBufferTime: 0.2
+  InputBufferTime: 0.3
   DamageableMask:
     serializedVersion: 2
     m_Bits: 6144
