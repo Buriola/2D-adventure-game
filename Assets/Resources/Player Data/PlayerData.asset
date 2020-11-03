@@ -21,11 +21,17 @@ MonoBehaviour:
   AccelerationTimeGrounded: 0.05
   MaxClimbAngle: 80
   MaxDescendAngle: 75
+  SlideDistance: 3.5
+  SlideSpeed: 20
+  SlideAcceleration: 0.05
+  SlideEaseAmount: 0.1
   CollisionAboveCheckDistance: 0.8
   NormalColliderSize: {x: 0.75, y: 1.8}
   NormalColliderOffset: {x: 0, y: -0.2}
   CrouchedColliderSize: {x: 0.75, y: 1.3}
   CrouchedColliderOffset: {x: 0, y: -0.45}
+  SlidingColliderSize: {x: 1.7, y: 0.85}
+  SlidingColliderOffset: {x: 0, y: -0.68}
   AccelerationTimeAirborne: 0.1
   MaxJumpHeight: 2.5
   MinJumpHeight: 0.5
@@ -46,7 +52,7 @@ MonoBehaviour:
   LedgeDistanceCheck: 0.5
   LedgeJumpClimb: {x: 5, y: 10}
   StartOffset: {x: 0.5, y: 0.85}
-  InputBufferTime: 0.3
+  InputBufferTime: 0.25
   DamageableMask:
     serializedVersion: 2
     m_Bits: 6144
@@ -68,6 +74,24 @@ MonoBehaviour:
     AttackCenterPoint: {x: 0, y: -0.45}
     KnockbackForce: {x: 8, y: 15}
     ApplyKnockback: 1
+  SwordAirAttack1:
+    Damage: 1
+    AttackRadius: 1
+    AttackCenterPoint: {x: 0, y: 0}
+    KnockbackForce: {x: 0, y: 0}
+    ApplyKnockback: 0
+  SwordAirAttack2:
+    Damage: 1
+    AttackRadius: 1
+    AttackCenterPoint: {x: 0, y: 0}
+    KnockbackForce: {x: 0, y: 0}
+    ApplyKnockback: 0
+  SwordAirAttack3:
+    Damage: 1
+    AttackRadius: 1
+    AttackCenterPoint: {x: 0, y: 0}
+    KnockbackForce: {x: 0, y: 0}
+    ApplyKnockback: 0
   PunchAttack1:
     Damage: 1
     AttackRadius: 1

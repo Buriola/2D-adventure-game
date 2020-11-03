@@ -139,7 +139,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!61 &179772035
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -548,7 +548,7 @@ MonoBehaviour:
   _debugAttack: 0
   _attackRadius: 1.5
   _attackCenterPoint: {x: -0, y: -0.45}
-  _debugLedge: 1
+  _debugLedge: 0
   _ledgeDetectedPosition: {x: 0, y: 0}
   _cornerPosition: {x: 0, y: 0}
 --- !u!114 &822648622
@@ -994,7 +994,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!50 &2085389175
 Rigidbody2D:
   serializedVersion: 4
@@ -1097,7 +1097,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2085389174}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.51, y: 0.78, z: 0}
+  m_LocalPosition: {x: 1.85, y: 0.86, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}

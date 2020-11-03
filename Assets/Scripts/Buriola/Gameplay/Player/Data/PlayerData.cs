@@ -14,12 +14,20 @@ namespace Buriola.Gameplay.Player.Data
         public float MaxClimbAngle = 80f;
         public float MaxDescendAngle = 75f;
 
+        [Header("Sliding")]
+        public float SlideDistance = 5f;
+        public float SlideSpeed = 5f;
+        public float SlideAcceleration = 0.2f;
+        public float SlideCooldown = 0.5f;
+
         [Header("Collider Settings")] 
         public float CollisionAboveCheckDistance = 0.8f;
         public Vector2 NormalColliderSize = Vector2.zero;
         public Vector2 NormalColliderOffset = Vector2.zero;
         public Vector2 CrouchedColliderSize = Vector2.zero;
         public Vector2 CrouchedColliderOffset = Vector2.zero;
+        public Vector2 SlidingColliderSize = Vector2.zero;
+        public Vector2 SlidingColliderOffset = Vector2.zero;
         
         [Header("Air & Jump")]
         public float AccelerationTimeAirborne = 0.2f;
@@ -46,10 +54,15 @@ namespace Buriola.Gameplay.Player.Data
         [Header("Combat Settings")]
         public float InputBufferTime = 0.5f;
         public LayerMask DamageableMask = default;
-        [Header("Attacks Info")]
+        [Header("Sword Attacks")]
         public AttackData SwordAttack1;
         public AttackData SwordAttack2;
         public AttackData SwordAttack3;
+        [Header("Sword Air Attacks")]
+        public AttackData SwordAirAttack1;
+        public AttackData SwordAirAttack2;
+        public AttackData SwordAirAttack3;
+        [Header("Hand Combat Attacks")]
         public AttackData PunchAttack1;
         public AttackData PunchAttack2;
         public AttackData PunchAttack3;

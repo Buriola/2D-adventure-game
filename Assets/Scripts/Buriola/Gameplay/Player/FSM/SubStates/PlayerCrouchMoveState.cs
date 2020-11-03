@@ -22,6 +22,12 @@ namespace Buriola.Gameplay.Player.FSM.SubStates
 
         public override void OnUpdate()
         {
+            if (!IsGrounded)
+            {
+                StateMachine.ChangeState(PlayerController.InAirState);
+                return;
+            }
+            
             RawInputX = PlayerController.InputHandler.RawInputX;
             RawInputY = PlayerController.InputHandler.RawInputY;
             

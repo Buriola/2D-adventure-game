@@ -7,7 +7,7 @@ namespace Buriola.Gameplay.Player.FSM.SuperStates
 {
     public class PlayerGroundedState : PlayerState
     {
-        private bool _isGrounded;
+        protected bool IsGrounded;
         
         protected Vector2 Input;
         protected float RawInputX;
@@ -32,6 +32,8 @@ namespace Buriola.Gameplay.Player.FSM.SuperStates
             InputController.Instance.GameInputContext.OnActionButton2Pressed += OnAttackPressed;
             InputController.Instance.GameInputContext.OnActionButton1Pressed -= OnSecondaryAttackPressed;
             InputController.Instance.GameInputContext.OnActionButton1Pressed += OnSecondaryAttackPressed;
+            InputController.Instance.GameInputContext.OnActionButton3Pressed -= OnSlidePressed;
+            InputController.Instance.GameInputContext.OnActionButton3Pressed += OnSlidePressed;
             
             PlayerController.JumpState.ResetJumps();
         }
@@ -44,7 +46,7 @@ namespace Buriola.Gameplay.Player.FSM.SuperStates
             RawInputX = PlayerController.InputHandler.RawInputX;
             RawInputY = PlayerController.InputHandler.RawInputY;
 
-            if (!_isGrounded)
+            if (!IsGrounded)
             {
                 StateMachine.ChangeState(PlayerController.InAirState);
                 return;
@@ -63,6 +65,7 @@ namespace Buriola.Gameplay.Player.FSM.SuperStates
             InputController.Instance.GameInputContext.OnActionButton1Pressed -= OnSecondaryAttackPressed;
             InputController.Instance.GameInputContext.OnActionButton2Pressed -= OnAttackPressed;
             InputController.Instance.GameInputContext.OnActionButton0Pressed -= OnJumpPressed;
+            InputController.Instance.GameInputContext.OnActionButton3Pressed -= OnSlidePressed;
         }
 
         public override void Dispose()
@@ -70,13 +73,14 @@ namespace Buriola.Gameplay.Player.FSM.SuperStates
             InputController.Instance.GameInputContext.OnActionButton1Pressed -= OnSecondaryAttackPressed;
             InputController.Instance.GameInputContext.OnActionButton2Pressed -= OnAttackPressed;
             InputController.Instance.GameInputContext.OnActionButton0Pressed -= OnJumpPressed;
+            InputController.Instance.GameInputContext.OnActionButton3Pressed -= OnSlidePressed;
         }
 
         protected override void DoChecks()
         {
             base.DoChecks();
 
-            _isGrounded = PlayerController.IsGrounded();
+            IsGrounded = PlayerController.IsGrounded();
             ObstacleAbove = PlayerController.CheckForObstaclesAbovePlayer();
         }
 
@@ -101,6 +105,14 @@ namespace Buriola.Gameplay.Player.FSM.SuperStates
             if (context.ReadValueAsButton() && !ObstacleAbove)
             {
                 StateMachine.ChangeState(PlayerController.HandAttackState);
+            }
+        }
+
+        private void OnSlidePressed(InputAction.CallbackContext context)
+        {
+            if (context.ReadValueAsButton() && !ObstacleAbove)
+            {
+                StateMachine.ChangeState(PlayerController.SlideState);
             }
         }
     }

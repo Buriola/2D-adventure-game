@@ -8,6 +8,7 @@ namespace Buriola.Gameplay.Combat
     {
         private PlayerController2D _playerController;
         private PlayerData _playerData;
+        private bool _invencible;
 
         private BaseAttack _swordAttack1;
         private BaseAttack _swordAttack2;
@@ -17,6 +18,7 @@ namespace Buriola.Gameplay.Combat
         {
             _playerController = player;
             _playerData = playerData;
+            _invencible = false;
             
             CreateAttacks();
         }
@@ -75,6 +77,11 @@ namespace Buriola.Gameplay.Combat
                 default:
                     return null;
             }
+        }
+
+        public void SetInvencibility(bool value)
+        {
+            _invencible = value;
         }
     }
 }

@@ -57,6 +57,7 @@ namespace Buriola.Gameplay.Player
         public PlayerAttackState SwordAttackState { get; private set; }
         public PlayerAttackState HandAttackState { get; private set; }
         public PlayerAttackState AirAttackState { get; private set; }
+        public PlayerSlideState SlideState { get; private set; }
         #endregion
 
         private void Awake()
@@ -77,6 +78,7 @@ namespace Buriola.Gameplay.Player
             SwordAttackState = new PlayerSwordAttackState(this, StateMachine, _playerData, AnimationConstants.PLAYER_ATTACK_1_HASH, 3);
             HandAttackState  = new PlayerHandAttackState(this, StateMachine, _playerData, AnimationConstants.PLAYER_PUNCH_1_HASH, 5);
             AirAttackState   = new PlayerAirAttackState(this, StateMachine, _playerData, AnimationConstants.PLAYER_AIR_ATTACK_1_HASH, 2);
+            SlideState       = new PlayerSlideState(this, StateMachine, _playerData, AnimationConstants.PLAYER_SLIDE_HASH);
         }
 
         private void Start()
@@ -125,6 +127,7 @@ namespace Buriola.Gameplay.Player
             SwordAttackState.Dispose();
             HandAttackState.Dispose();
             AirAttackState.Dispose();
+            SlideState.Dispose();
         }
 
         private void OnDrawGizmos()

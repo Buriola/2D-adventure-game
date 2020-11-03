@@ -32,6 +32,7 @@ namespace Buriola.Gameplay.Animations
         private const string PLAYER_PUNCH_3 = "Punch3";
         private const string PLAYER_KICK_1 = "Kick1";
         private const string PLAYER_KICK_2 = "Kick2";
+        private const string PLAYER_SLIDE = "Slide";
         
         public static readonly int PLAYER_IDLE_1_HASH       = Animator.StringToHash(PLAYER_IDLE_1);
         public static readonly int PLAYER_IDLE_2_HASH       = Animator.StringToHash(PLAYER_IDLE_2);
@@ -61,5 +62,6 @@ namespace Buriola.Gameplay.Animations
         public static readonly int PLAYER_PUNCH_3_HASH      = Animator.StringToHash(PLAYER_PUNCH_3);
         public static readonly int PLAYER_KICK_1_HASH       = Animator.StringToHash(PLAYER_KICK_1);
         public static readonly int PLAYER_KICK_2_HASH       = Animator.StringToHash(PLAYER_KICK_2);
+        public static readonly int PLAYER_SLIDE_HASH        = Animator.StringToHash(PLAYER_SLIDE);
     }
 }
