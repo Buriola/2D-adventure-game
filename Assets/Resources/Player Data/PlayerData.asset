@@ -26,10 +26,10 @@ MonoBehaviour:
   NormalColliderOffset: {x: 0, y: -0.2}
   CrouchedColliderSize: {x: 0.75, y: 1.3}
   CrouchedColliderOffset: {x: 0, y: -0.45}
-  AccelerationTimeAirborne: 0.25
-  MaxJumpHeight: 4.5
-  MinJumpHeight: 1
-  TimeToJumpApex: 0.35
+  AccelerationTimeAirborne: 0.1
+  MaxJumpHeight: 3
+  MinJumpHeight: 0.5
+  TimeToJumpApex: 0.4
   JumpAmount: 0
   WallCollisionMask:
     serializedVersion: 2
@@ -37,16 +37,16 @@ MonoBehaviour:
   WallDistanceCheck: 0.5
   WallSlideMaxSpeed: 3
   WallStickTime: 0.25
-  WallJumpClimb: {x: 12, y: 23}
-  WallJumpOff: {x: 10, y: 0}
-  WallJumpLeap: {x: 12, y: 25}
+  WallJumpClimb: {x: 18, y: 12}
+  WallJumpOff: {x: 15, y: 0}
+  WallJumpLeap: {x: 15, y: 16}
   LedgeCollisionMask:
     serializedVersion: 2
     m_Bits: 1536
   LedgeDistanceCheck: 0.5
-  LedgeJumpClimb: {x: 4, y: 16}
+  LedgeJumpClimb: {x: 5, y: 10}
   StartOffset: {x: 0.5, y: 0.85}
-  InputBufferTime: 0.5
+  InputBufferTime: 0.2
   DamageableMask:
     serializedVersion: 2
     m_Bits: 6144
@@ -60,7 +60,7 @@ MonoBehaviour:
     Damage: 1
     AttackRadius: 0.8
     AttackCenterPoint: {x: 0.7, y: -0.25}
-    KnockbackForce: {x: 3, y: 10}
+    KnockbackForce: {x: 2, y: 10}
     ApplyKnockback: 1
   SwordAttack3:
     Damage: 1

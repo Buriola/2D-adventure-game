@@ -21,6 +21,10 @@ namespace Buriola.Gameplay.Player
         [SerializeField] private bool _debugAttack = false;
         [SerializeField] private float _attackRadius = 0f;
         [SerializeField] private Vector2 _attackCenterPoint = Vector2.zero;
+
+        [SerializeField] private bool _debugLedge = false;
+        [SerializeField] private Vector2 _ledgeDetectedPosition = Vector2.zero;
+        [SerializeField] private Vector2 _cornerPosition = Vector2.zero;
         
         private Vector2 _velocity;
         private Vector2 _gravityForce;
@@ -138,6 +142,14 @@ namespace Buriola.Gameplay.Player
                     Gizmos.color = Color.cyan;
                     Gizmos.DrawWireSphere((Vector2) (transform.position) + _attackCenterPoint, _attackRadius);
                 }
+
+                if (_debugLedge)
+                {
+                    Gizmos.color = Color.red;
+                    Gizmos.DrawWireSphere(_ledgeDetectedPosition, 0.1f);
+                    Gizmos.color = Color.yellow;
+                    Gizmos.DrawWireSphere(_cornerPosition, .1f);
+                }
             }
         }
         
@@ -169,6 +181,8 @@ namespace Buriola.Gameplay.Player
 
         public bool CheckForLedges()
         {
+            _ledgeDetectedPosition = transform.position;
+
             return Physics2D.Raycast((Vector2) transform.position + _ledgeCheckPoint, 
                 Vector2.right * DirectionX, _playerData.LedgeDistanceCheck, _playerData.LedgeCollisionMask);
         }
@@ -201,7 +215,9 @@ namespace Buriola.Gameplay.Player
                 yDistance = yHit.distance;
             }
             
-            _velocity.Set(transform.position.x + (xDistance * DirectionX), globalLedgeCheckPos.y - yDistance);
+            _velocity.Set(transform.position.x + (xDistance * DirectionX), transform.position.y - yDistance);
+
+            _cornerPosition = _velocity;
             
             return _velocity;
         }

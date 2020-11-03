@@ -1,8 +1,6 @@
 ﻿using System.Collections.Generic;
-using Buriola.Gameplay.Animations;
 using Buriola.Gameplay.Player.Data;
 using Buriola.Gameplay.Player.FSM.SuperStates;
-using Buriola.InputSystem;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -14,13 +12,14 @@ namespace Buriola.Gameplay.Player.FSM.SubStates
         private bool _inputRegistered;
         private int _attackCounter;
 
-        private const float _inputHoldTime = 0.5f;
+        private readonly float _inputHoldTime;
         protected Dictionary<int, int> CounterToAnim;
         private readonly int _attackCombo;
 
         protected PlayerAttackState(PlayerController2D player, PlayerStateMachine stateMachine, PlayerData data, int animationHash, int attackCombo) : base(player, stateMachine, data, animationHash)
         {
             _attackCombo = attackCombo;
+            _inputHoldTime = data.InputBufferTime;
         }
 
         public override void OnEnter()
