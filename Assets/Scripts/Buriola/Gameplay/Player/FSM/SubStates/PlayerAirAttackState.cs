@@ -31,6 +31,12 @@ namespace Buriola.Gameplay.Player.FSM.SubStates
         {
             base.OnUpdate();
             
+            if (IsGrounded && PlayerController.CurrentVelocity.y < 0.01f)
+            {
+                IsAbilityDone = true;
+                return;
+            }
+            
             _rawInputX = PlayerController.InputHandler.RawInputX;
             
             float targetVelocityX = _rawInputX * PlayerData.MoveSpeed;
@@ -38,11 +44,6 @@ namespace Buriola.Gameplay.Player.FSM.SubStates
             
             PlayerController.CheckIfShouldFlip(_rawInputX);
             PlayerController.SetVelocityX(xMovement);
-            
-            if (IsGrounded && PlayerController.CurrentVelocity.y < 0.01f)
-            {
-                StateMachine.ChangeState(PlayerController.LandState);
-            }
         }
 
         public override void OnExit()
