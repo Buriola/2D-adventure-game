@@ -1,4 +1,5 @@
-﻿using Buriola.Gameplay.Player.Data;
+﻿using Buriola.Gameplay.Animations;
+using Buriola.Gameplay.Player.Data;
 using Buriola.Gameplay.Player.FSM.SuperStates;
 using UnityEngine;
 
@@ -10,6 +11,8 @@ namespace Buriola.Gameplay.Player.FSM.SubStates
         private float _timeToFinishSlide;
         private float _timer;
         private float _velocityXSmoothing;
+
+        private bool _playStandAnimation;
 
         public PlayerSlideState(PlayerController2D player, PlayerStateMachine stateMachine, PlayerData data, int animationHash) : base(player, stateMachine, data, animationHash)
         {
@@ -28,6 +31,7 @@ namespace Buriola.Gameplay.Player.FSM.SubStates
             PlayerController.Collider.size = PlayerData.SlidingColliderSize;
             PlayerController.Collider.offset = PlayerData.SlidingColliderOffset;
 
+            _playStandAnimation = false;
             _timer = 0f;
             _timeToFinishSlide = (2 * PlayerData.SlideDistance) / PlayerData.SlideSpeed; //All hail Physics!
         }
@@ -43,14 +47,26 @@ namespace Buriola.Gameplay.Player.FSM.SubStates
             }
 
             _timer += Time.deltaTime;
-            if (_timer >= _timeToFinishSlide)
+            if (_timer >= _timeToFinishSlide && !_playStandAnimation)
             {
-                IsAbilityDone = true;
+                _playStandAnimation = true;
+                PlayerController.SetVelocity(Vector2.zero);
+                PlayerController.AnimController.PlayAnimation(AnimationConstants.PLAYER_STAND_HASH);
+                return;
             }
             
-            float targetVelocityX = _slideDirection.x * PlayerData.SlideSpeed;
-            float xMovement = Mathf.SmoothDamp(PlayerController.CurrentVelocity.x, targetVelocityX, ref _velocityXSmoothing, PlayerData.SlideAcceleration);
-            PlayerController.SetVelocityX(xMovement);
+            if (!_playStandAnimation)
+            {
+                float targetVelocityX = _slideDirection.x * PlayerData.SlideSpeed;
+                float xMovement = Mathf.SmoothDamp(PlayerController.CurrentVelocity.x, targetVelocityX, ref _velocityXSmoothing, PlayerData.SlideAcceleration);
+                PlayerController.SetVelocityX(xMovement);
+            }
+        }
+
+        public override void AnimationFinishTrigger()
+        {
+            base.AnimationFinishTrigger();
+            IsAbilityDone = true;
         }
 
         public override void OnExit()
