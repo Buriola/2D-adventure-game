@@ -14,8 +14,6 @@ namespace Buriola.Gameplay.Player
     public class PlayerController2D : MonoBehaviour, IDamageable
     {
         [SerializeField] private PlayerData _playerData = null;
-        [SerializeField] private Vector2 _groundCheckPoint = Vector2.zero;
-        [SerializeField] private Vector2 _ledgeCheckPoint = Vector2.zero;
 
         //Debug variables
         [SerializeField] private bool _debugAttack = false;
@@ -135,10 +133,11 @@ namespace Buriola.Gameplay.Player
             if (_playerData != null)
             {
                 Gizmos.color = Color.yellow;
-                Vector2 globalWaypointPos = _groundCheckPoint + (Vector2)transform.position;
-                Gizmos.DrawWireSphere(globalWaypointPos, _playerData.GroundCheckRadius);
+                Gizmos.DrawWireSphere(_playerData.GroundCheckPoint + (Vector2)transform.position, _playerData.GroundCheckRadius);
                 Gizmos.DrawRay(transform.position, Vector2.right * _playerData.WallDistanceCheck); 
-                Gizmos.DrawRay((Vector2)transform.position + _ledgeCheckPoint, Vector2.right * _playerData.LedgeDistanceCheck); 
+                
+                Gizmos.DrawRay((Vector2)transform.position + _playerData.LedgeHorizontalCheckPoint, Vector2.right * _playerData.LedgeHorizontalDistanceCheck);
+                Gizmos.DrawRay((Vector2)transform.position + _playerData.LedgeVerticalCheckPoint, Vector2.down * _playerData.LedgeVerticalDistanceCheck);
                 
                 Gizmos.color = Color.green;
                 Gizmos.DrawRay((Vector2) (transform.position) - (Vector2.up), Vector2.up * 1f);
@@ -170,7 +169,7 @@ namespace Buriola.Gameplay.Player
         
         public bool IsGrounded()
         {
-            return Physics2D.OverlapCircle(_groundCheckPoint + (Vector2)transform.position, _playerData.GroundCheckRadius, _playerData.GroundCollisionMask);
+            return Physics2D.OverlapCircle((Vector2)transform.position + _playerData.GroundCheckPoint, _playerData.GroundCheckRadius, _playerData.GroundCollisionMask);
         }
 
         public bool IsTouchingWall()
@@ -189,8 +188,8 @@ namespace Buriola.Gameplay.Player
         {
             _ledgeDetectedPosition = transform.position;
 
-            return Physics2D.Raycast((Vector2) transform.position + _ledgeCheckPoint, 
-                Vector2.right * DirectionX, _playerData.LedgeDistanceCheck, _playerData.LedgeCollisionMask);
+            return Physics2D.Raycast((Vector2) transform.position + _playerData.LedgeHorizontalCheckPoint, 
+                Vector2.right * DirectionX, _playerData.LedgeHorizontalDistanceCheck, _playerData.LedgeCollisionMask);
         }
 
         public bool CheckForObstaclesAbovePlayer()
@@ -200,28 +199,22 @@ namespace Buriola.Gameplay.Player
 
         public Vector2 FindCornerPosition()
         {
-            float xDistance = 0f;
-            float yDistance = 0f;
-
-            Vector2 globalLedgeCheckPos = (Vector2) transform.position + _ledgeCheckPoint; 
+            float xValue = 0f;
+            float yValue = 0f;
             
-            RaycastHit2D xHit = Physics2D.Raycast(transform.position, Vector2.right * DirectionX,
-                _playerData.WallDistanceCheck, _playerData.GroundCollisionMask);
+            Vector2 verticalCheckPoint = _playerData.LedgeVerticalCheckPoint;
+            verticalCheckPoint.x *= DirectionX;
             
-            if (xHit)
-            {
-                xDistance = xHit.distance;
-                _velocity.Set(xDistance * DirectionX, 0f);
-            }
+            RaycastHit2D xHit = Physics2D.Raycast(transform.position, Vector2.right * DirectionX, _playerData.WallDistanceCheck, _playerData.GroundCollisionMask);
+            RaycastHit2D yHit = Physics2D.Raycast((Vector2) transform.position + verticalCheckPoint, Vector2.down, _playerData.LedgeVerticalDistanceCheck, _playerData.GroundCollisionMask);
 
-            RaycastHit2D yHit = Physics2D.Raycast(globalLedgeCheckPos + _velocity, Vector2.down, 1f, _playerData.GroundCollisionMask);
-
-            if (yHit)
+            if (xHit && yHit)
             {
-                yDistance = yHit.distance;
+                xValue = xHit.distance;
+                yValue = yHit.point.y - xHit.point.y;
             }
             
-            _velocity.Set(transform.position.x + (xDistance * DirectionX), transform.position.y - yDistance);
+            _velocity.Set(transform.position.x + (xValue * DirectionX), transform.position.y + yValue);
 
             _cornerPosition = _velocity;
             

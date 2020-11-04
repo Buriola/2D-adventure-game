@@ -27,16 +27,15 @@ namespace Buriola.Gameplay.Player.FSM.SubStates
 
             PlayerController.ToggleGravity();
             PlayerController.SetVelocity(Vector2.zero);
-            PlayerController.transform.position = _detectedPosition;
             
             _cornerPosition = PlayerController.FindCornerPosition();
 
-            float xStartPosition = _cornerPosition.x - (PlayerController.DirectionX * PlayerData.StartOffset.x);
-            float yStartPosition = _cornerPosition.y - PlayerData.StartOffset.y;
+            float xStartPosition = _cornerPosition.x - (PlayerController.DirectionX * PlayerData.LedgeStartOffset.x);
+            float yStartPosition = _cornerPosition.y - PlayerData.LedgeStartOffset.y;
             _startPosition.Set(xStartPosition, yStartPosition);
 
-            float xEndPosition = PlayerController.transform.position.x + .1f;
-            float yEndPosition = PlayerController.transform.position.y + 1.15f;
+            float xEndPosition = _cornerPosition.x + (PlayerController.DirectionX * PlayerData.LedgeEndOffset.x);
+            float yEndPosition = _cornerPosition.y + PlayerData.LedgeEndOffset.y;
             _endPosition.Set(xEndPosition, yEndPosition);
 
             PlayerController.transform.position = _startPosition;

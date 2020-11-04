@@ -7,6 +7,7 @@ namespace Buriola.Gameplay.Player.Data
     {
         [Header("Movement")]
         public LayerMask GroundCollisionMask;
+        public Vector2 GroundCheckPoint = Vector2.zero;
         public float GroundCheckRadius = 1f;
         public float MoveSpeed = 4f;
         public float CrouchedMoveSpeed = 8f;
@@ -47,9 +48,13 @@ namespace Buriola.Gameplay.Player.Data
 
         [Header("Ledge Movement")] 
         public LayerMask LedgeCollisionMask;
-        public float LedgeDistanceCheck = 0.5f;
+        public Vector2 LedgeHorizontalCheckPoint = Vector2.zero;
+        public Vector2 LedgeVerticalCheckPoint = Vector2.zero;
+        public float LedgeHorizontalDistanceCheck = 0.5f;
+        public float LedgeVerticalDistanceCheck = 0.5f;
         public Vector2 LedgeJumpClimb = Vector2.zero;
-        public Vector2 StartOffset = Vector2.zero;
+        public Vector2 LedgeStartOffset = Vector2.zero;
+        public Vector2 LedgeEndOffset = Vector2.zero;
 
         [Header("Combat Settings")]
         public float InputBufferTime = 0.5f;
