@@ -15,6 +15,7 @@ MonoBehaviour:
   GroundCollisionMask:
     serializedVersion: 2
     m_Bits: 1536
+  GroundCheckPoint: {x: 0, y: -0.87}
   GroundCheckRadius: 0.25
   MoveSpeed: 10
   CrouchedMoveSpeed: 2
@@ -49,6 +50,8 @@ MonoBehaviour:
   LedgeCollisionMask:
     serializedVersion: 2
     m_Bits: 1536
+  LedgeHorizontalCheckPoint: {x: 0, y: 0.5}
+  LedgeVerticalCheckPoint: {x: 0.5, y: 0.5}
   LedgeHorizontalDistanceCheck: 0.5
   LedgeVerticalDistanceCheck: 0.5
   LedgeJumpClimb: {x: 5, y: 10}
