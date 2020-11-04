@@ -28,9 +28,9 @@ namespace Buriola.Gameplay.Player
         private Vector2 _gravityForce;
         
         private bool _gravityEnabled;
+        private float _gravity;
+        private Rigidbody2D _rb2d;
         
-        public float Gravity { get; private set; }
-        public Rigidbody2D Rb2d { get; private set; }
         public CapsuleCollider2D Collider { get; private set; }
         public AnimationController AnimController { get; private set; }
         public PlayerInputHandler InputHandler { get; private set; }
@@ -41,7 +41,7 @@ namespace Buriola.Gameplay.Player
 
         #region State Machine
 
-        private PlayerStateMachine StateMachine { get; set; }
+        private PlayerStateMachine _stateMachine;
         public PlayerIdleState IdleState { get; private set; }
         public PlayerMoveState MoveState { get; private set; }
         public PlayerJumpState JumpState { get; private set; }
@@ -56,58 +56,60 @@ namespace Buriola.Gameplay.Player
         public PlayerAttackState HandAttackState { get; private set; }
         public PlayerAttackState AirAttackState { get; private set; }
         public PlayerSlideState SlideState { get; private set; }
+        public PlayerItemState ItemState { get; private set; }
         #endregion
 
         private void Awake()
         {
-            StateMachine = new PlayerStateMachine();
+            _stateMachine = new PlayerStateMachine();
             CombatController = new CombatController();
             
-            IdleState        = new PlayerIdleState(this, StateMachine, _playerData, AnimationConstants.PLAYER_IDLE_2_HASH);
-            MoveState        = new PlayerMoveState(this, StateMachine, _playerData, AnimationConstants.PLAYER_RUN_2_HASH);
-            JumpState        = new PlayerJumpState(this, StateMachine, _playerData, AnimationConstants.PLAYER_JUMP_HASH);
-            InAirState       = new PlayerInAirState(this, StateMachine, _playerData, AnimationConstants.PLAYER_AIR_HASH);
-            LandState        = new PlayerLandState(this, StateMachine, _playerData, AnimationConstants.PLAYER_LAND_HASH);
-            WallSlideState   = new PlayerWallSlideState(this, StateMachine, _playerData, AnimationConstants.PLAYER_WALL_SLIDING_HASH);
-            LedgeClimbState  = new PlayerLedgeClimbState(this, StateMachine, _playerData, AnimationConstants.PLAYER_LEDGE_GRAB_HASH);
-            LedgeJumpState   = new PlayerLedgeJumpState(this, StateMachine, _playerData, AnimationConstants.PLAYER_LEDGE_JUMP_HASH);
-            CrouchIdleState  = new PlayerCrouchIdleState(this, StateMachine, _playerData, AnimationConstants.PLAYER_CROUCH_IDLE_HASH);
-            CrouchMoveState  = new PlayerCrouchMoveState(this, StateMachine, _playerData, AnimationConstants.PLAYER_CROUCH_WALK_HASH);
-            SwordAttackState = new PlayerSwordAttackState(this, StateMachine, _playerData, AnimationConstants.PLAYER_ATTACK_1_HASH, 3);
-            HandAttackState  = new PlayerHandAttackState(this, StateMachine, _playerData, AnimationConstants.PLAYER_PUNCH_1_HASH, 5);
-            AirAttackState   = new PlayerAirAttackState(this, StateMachine, _playerData, AnimationConstants.PLAYER_AIR_ATTACK_1_HASH, 2);
-            SlideState       = new PlayerSlideState(this, StateMachine, _playerData, AnimationConstants.PLAYER_SLIDE_HASH);
+            IdleState        = new PlayerIdleState(this, _stateMachine, _playerData, AnimationConstants.PLAYER_IDLE_2_HASH);
+            MoveState        = new PlayerMoveState(this, _stateMachine, _playerData, AnimationConstants.PLAYER_RUN_2_HASH);
+            JumpState        = new PlayerJumpState(this, _stateMachine, _playerData, AnimationConstants.PLAYER_JUMP_HASH);
+            InAirState       = new PlayerInAirState(this, _stateMachine, _playerData, AnimationConstants.PLAYER_AIR_HASH);
+            LandState        = new PlayerLandState(this, _stateMachine, _playerData, AnimationConstants.PLAYER_LAND_HASH);
+            WallSlideState   = new PlayerWallSlideState(this, _stateMachine, _playerData, AnimationConstants.PLAYER_WALL_SLIDING_HASH);
+            LedgeClimbState  = new PlayerLedgeClimbState(this, _stateMachine, _playerData, AnimationConstants.PLAYER_LEDGE_GRAB_HASH);
+            LedgeJumpState   = new PlayerLedgeJumpState(this, _stateMachine, _playerData, AnimationConstants.PLAYER_LEDGE_JUMP_HASH);
+            CrouchIdleState  = new PlayerCrouchIdleState(this, _stateMachine, _playerData, AnimationConstants.PLAYER_CROUCH_IDLE_HASH);
+            CrouchMoveState  = new PlayerCrouchMoveState(this, _stateMachine, _playerData, AnimationConstants.PLAYER_CROUCH_WALK_HASH);
+            SwordAttackState = new PlayerSwordAttackState(this, _stateMachine, _playerData, AnimationConstants.PLAYER_ATTACK_1_HASH, 3);
+            HandAttackState  = new PlayerHandAttackState(this, _stateMachine, _playerData, AnimationConstants.PLAYER_PUNCH_1_HASH, 5);
+            AirAttackState   = new PlayerAirAttackState(this, _stateMachine, _playerData, AnimationConstants.PLAYER_AIR_ATTACK_1_HASH, 2);
+            SlideState       = new PlayerSlideState(this, _stateMachine, _playerData, AnimationConstants.PLAYER_SLIDE_HASH);
+            ItemState        = new PlayerItemState(this, _stateMachine, _playerData, AnimationConstants.PLAYER_USE_ITEM_HASH);
         }
 
         private void Start()
         {
-            Rb2d = GetComponent<Rigidbody2D>();
+            _rb2d = GetComponent<Rigidbody2D>();
             Collider = GetComponent<CapsuleCollider2D>();
             AnimController = GetComponent<AnimationController>();
             InputHandler = GetComponent<PlayerInputHandler>();
             DirectionX = 1;
             _gravityEnabled = true;
 
-            Gravity = -(2 * _playerData.MaxJumpHeight) / Mathf.Pow(_playerData.TimeToJumpApex, 2);
-            _gravityForce.Set(0f, Gravity);
+            _gravity = -(2 * _playerData.MaxJumpHeight) / Mathf.Pow(_playerData.TimeToJumpApex, 2);
+            _gravityForce.Set(0f, _gravity);
             
-            StateMachine.Initialize(IdleState);
+            _stateMachine.Initialize(IdleState);
             CombatController.Initialize(this, _playerData);
         }
 
         private void Update()
         {
-            CurrentVelocity = Rb2d.velocity;
-            StateMachine.CurrentState.OnUpdate();
+            CurrentVelocity = _rb2d.velocity;
+            _stateMachine.CurrentState.OnUpdate();
         }
 
         private void FixedUpdate()
         {
-            StateMachine.CurrentState.OnPhysicsUpdate();
+            _stateMachine.CurrentState.OnPhysicsUpdate();
 
-            if (!Rb2d.IsSleeping() && _gravityEnabled)
+            if (!_rb2d.IsSleeping() && _gravityEnabled)
             {
-                Rb2d.AddForce(_gravityForce, ForceMode2D.Force);   
+                _rb2d.AddForce(_gravityForce, ForceMode2D.Force);   
             }
         }
 
@@ -164,8 +166,8 @@ namespace Buriola.Gameplay.Player
             transform.Rotate(0f, 180f, 0f);
         }
 
-        private void AnimationTrigger() => StateMachine.CurrentState.AnimationTrigger();
-        private void AnimationFinishTrigger() => StateMachine.CurrentState.AnimationFinishTrigger();
+        private void AnimationTrigger() => _stateMachine.CurrentState.AnimationTrigger();
+        private void AnimationFinishTrigger() => _stateMachine.CurrentState.AnimationFinishTrigger();
         
         public bool IsGrounded()
         {
@@ -224,21 +226,21 @@ namespace Buriola.Gameplay.Player
         public void SetVelocity(Vector2 velocity)
         {
             _velocity = velocity;
-            Rb2d.velocity = _velocity;
+            _rb2d.velocity = _velocity;
             CurrentVelocity = _velocity;
         }
 
         public void SetVelocityX(float xVelocity)
         {
             _velocity.Set(xVelocity, CurrentVelocity.y);
-            Rb2d.velocity = _velocity;
+            _rb2d.velocity = _velocity;
             CurrentVelocity = _velocity;
         }
 
         public void SetVelocityY(float yVelocity)
         {
             _velocity.Set(CurrentVelocity.x, yVelocity);
-            Rb2d.velocity = _velocity;
+            _rb2d.velocity = _velocity;
             CurrentVelocity = _velocity;
         }
 

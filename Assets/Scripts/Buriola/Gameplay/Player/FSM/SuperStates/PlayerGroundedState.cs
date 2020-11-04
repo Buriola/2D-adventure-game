@@ -28,12 +28,18 @@ namespace Buriola.Gameplay.Player.FSM.SuperStates
             
             InputController.Instance.GameInputContext.OnActionButton0Pressed -= OnJumpPressed;
             InputController.Instance.GameInputContext.OnActionButton0Pressed += OnJumpPressed;
+            
             InputController.Instance.GameInputContext.OnActionButton2Pressed -= OnAttackPressed;
             InputController.Instance.GameInputContext.OnActionButton2Pressed += OnAttackPressed;
+            
             InputController.Instance.GameInputContext.OnActionButton1Pressed -= OnSecondaryAttackPressed;
             InputController.Instance.GameInputContext.OnActionButton1Pressed += OnSecondaryAttackPressed;
+            
             InputController.Instance.GameInputContext.OnActionButton3Pressed -= OnSlidePressed;
             InputController.Instance.GameInputContext.OnActionButton3Pressed += OnSlidePressed;
+            
+            InputController.Instance.GameInputContext.OnDpadPressed -= OnDpadPressed;
+            InputController.Instance.GameInputContext.OnDpadPressed += OnDpadPressed;
             
             PlayerController.JumpState.ResetJumps();
         }
@@ -66,6 +72,7 @@ namespace Buriola.Gameplay.Player.FSM.SuperStates
             InputController.Instance.GameInputContext.OnActionButton2Pressed -= OnAttackPressed;
             InputController.Instance.GameInputContext.OnActionButton0Pressed -= OnJumpPressed;
             InputController.Instance.GameInputContext.OnActionButton3Pressed -= OnSlidePressed;
+            InputController.Instance.GameInputContext.OnDpadPressed -= OnDpadPressed;
         }
 
         public override void Dispose()
@@ -74,6 +81,7 @@ namespace Buriola.Gameplay.Player.FSM.SuperStates
             InputController.Instance.GameInputContext.OnActionButton2Pressed -= OnAttackPressed;
             InputController.Instance.GameInputContext.OnActionButton0Pressed -= OnJumpPressed;
             InputController.Instance.GameInputContext.OnActionButton3Pressed -= OnSlidePressed;
+            InputController.Instance.GameInputContext.OnDpadPressed -= OnDpadPressed;
         }
 
         protected override void DoChecks()
@@ -113,6 +121,16 @@ namespace Buriola.Gameplay.Player.FSM.SuperStates
             if (context.ReadValueAsButton() && !ObstacleAbove)
             {
                 StateMachine.ChangeState(PlayerController.SlideState);
+            }
+        }
+
+        private void OnDpadPressed(InputAction.CallbackContext context)
+        {
+            Vector2 dpad = context.ReadValue<Vector2>();
+            
+            if (dpad.y > 0f && context.performed && !ObstacleAbove)
+            {
+                StateMachine.ChangeState(PlayerController.ItemState);
             }
         }
     }

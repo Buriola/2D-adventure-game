@@ -34,9 +34,9 @@ MonoBehaviour:
   SlidingColliderSize: {x: 1.7, y: 0.85}
   SlidingColliderOffset: {x: 0, y: -0.68}
   AccelerationTimeAirborne: 0.1
-  MaxJumpHeight: 2.5
+  MaxJumpHeight: 3
   MinJumpHeight: 0.5
-  TimeToJumpApex: 0.35
+  TimeToJumpApex: 0.4
   JumpAmount: 0
   WallCollisionMask:
     serializedVersion: 2
@@ -50,10 +50,10 @@ MonoBehaviour:
   LedgeCollisionMask:
     serializedVersion: 2
     m_Bits: 1536
-  LedgeHorizontalCheckPoint: {x: 0, y: 0.5}
-  LedgeVerticalCheckPoint: {x: 0.5, y: 0.5}
+  LedgeHorizontalCheckPoint: {x: 0, y: 1}
+  LedgeVerticalCheckPoint: {x: 0.5, y: 1}
   LedgeHorizontalDistanceCheck: 0.5
-  LedgeVerticalDistanceCheck: 0.5
+  LedgeVerticalDistanceCheck: 1
   LedgeJumpClimb: {x: 5, y: 10}
   LedgeStartOffset: {x: 0.5, y: 0.85}
   LedgeEndOffset: {x: 0, y: 1.15}

@@ -35,6 +35,7 @@ namespace Buriola.Gameplay.Animations
         private const string PLAYER_SLIDE = "Slide";
         private const string PLAYER_STAND = "Stand";
         private const string PLAYER_SOMERSAULT = "Somersault";
+        private const string PLAYER_USE_ITEM = "Item";
         
         public static readonly int PLAYER_IDLE_1_HASH       = Animator.StringToHash(PLAYER_IDLE_1);
         public static readonly int PLAYER_IDLE_2_HASH       = Animator.StringToHash(PLAYER_IDLE_2);
@@ -67,5 +68,6 @@ namespace Buriola.Gameplay.Animations
         public static readonly int PLAYER_SLIDE_HASH        = Animator.StringToHash(PLAYER_SLIDE);
         public static readonly int PLAYER_STAND_HASH        = Animator.StringToHash(PLAYER_STAND);
         public static readonly int PLAYER_SOMERSAULT_HASH   = Animator.StringToHash(PLAYER_SOMERSAULT);
+        public static readonly int PLAYER_USE_ITEM_HASH     = Animator.StringToHash(PLAYER_USE_ITEM);
     }
 }
